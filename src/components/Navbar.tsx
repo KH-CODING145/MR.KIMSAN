@@ -12,7 +12,6 @@ interface NavbarProps {
   brandName?: string;
   activeSection?: string;
   onSectionChange?: (section: string) => void;
-  onOpenSourceModal?: () => void;
   onOpenCourseModal?: (courseId?: string) => void;
 }
 
@@ -36,7 +35,6 @@ export default function Navbar({
   brandName = 'PRO DIGITAL',
   activeSection: externalActiveSection,
   onSectionChange,
-  onOpenSourceModal,
   onOpenCourseModal,
 }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -178,7 +176,7 @@ export default function Navbar({
               })}
             </nav>
 
-            {/* Desktop Right Action: Theme Switcher, Course Hub, Source Code & Contact */}
+            {/* Desktop Right Action: Theme Switcher, Course Hub & Contact */}
             <div className="hidden xl:flex items-center gap-2.5">
               {onOpenCourseModal && (
                 <button
@@ -189,17 +187,6 @@ export default function Navbar({
                 >
                   <Video className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   <span>Courses</span>
-                </button>
-              )}
-              {onOpenSourceModal && (
-                <button
-                  type="button"
-                  onClick={onOpenSourceModal}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-800 transition-colors active:scale-95 shadow-xs cursor-pointer"
-                  title="Inspect Portfolio Source Code"
-                >
-                  <Code2 className="w-3.5 h-3.5 text-indigo-500" />
-                  <span>Source Code</span>
                 </button>
               )}
               <ThemeToggle theme={theme} resolvedTheme={resolvedTheme} setTheme={setTheme} />
@@ -275,19 +262,6 @@ export default function Navbar({
                   >
                     <Video className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     <span>Open Video Learning Studio (វីដេអូមេរៀន)</span>
-                  </button>
-                )}
-                {onOpenSourceModal && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onOpenSourceModal();
-                    }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium text-sm hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800 cursor-pointer"
-                  >
-                    <Code2 className="w-4 h-4 text-indigo-500" />
-                    <span>Inspect Portfolio Source Code</span>
                   </button>
                 )}
                 <a

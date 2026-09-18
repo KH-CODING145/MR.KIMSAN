@@ -13,7 +13,6 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 import PortfolioSkeleton from './components/PortfolioSkeleton';
-import PortfolioAppSourceModal from './components/PortfolioAppSourceModal';
 import ResumeModal from './components/ResumeModal';
 import CourseLearningModal from './components/CourseLearningModal';
 import { useTheme } from './hooks/useTheme';
@@ -37,7 +36,6 @@ export default function App() {
   const { theme, resolvedTheme, setTheme } = useTheme();
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPortfolioSourceOpen, setIsPortfolioSourceOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string | undefined>();
@@ -97,7 +95,6 @@ export default function App() {
         brandName={portfolio.brand || 'PRO DIGITAL'}
         activeSection={activeSection}
         onSectionChange={setActiveSection}
-        onOpenSourceModal={() => setIsPortfolioSourceOpen(true)}
         onOpenCourseModal={() => handleOpenCourseModal()}
       />
 
@@ -158,12 +155,6 @@ export default function App() {
       <BackToTop
         targetSectionId="home"
         onScrollToTop={() => setActiveSection('home')}
-      />
-
-      {/* Portfolio Source Code Modal */}
-      <PortfolioAppSourceModal
-        isOpen={isPortfolioSourceOpen}
-        onClose={() => setIsPortfolioSourceOpen(false)}
       />
 
       {/* Resume / CV Modal */}
