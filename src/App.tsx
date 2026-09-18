@@ -16,7 +16,6 @@ import PortfolioSkeleton from './components/PortfolioSkeleton';
 import ResumeModal from './components/ResumeModal';
 import CourseLearningModal from './components/CourseLearningModal';
 import SectionDivider from './components/SectionDivider';
-import SocialWall from './components/SocialWall';
 import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
 import {
@@ -25,7 +24,6 @@ import {
   Layers,
   CreditCard,
   FolderGit2,
-  Radio,
   GraduationCap,
   Briefcase,
   BookOpen,
@@ -44,7 +42,6 @@ const SECTION_IDS = [
   'services',
   'pricing',
   'projects',
-  'social-wall',
   'learning',
   'experience',
   'education',
@@ -161,11 +158,6 @@ export default function App() {
           selectedProject={activeProject}
           onSelectProject={setActiveProject}
         />
-
-        <SectionDivider icon={Radio} label="Live Feed" />
-
-        {/* 5.5. Real-Time Professional Social Wall */}
-        <SocialWall />
 
         <SectionDivider icon={GraduationCap} label="Learning" />
 

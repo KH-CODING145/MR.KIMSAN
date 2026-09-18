@@ -22,7 +22,6 @@ const navItems = [
   { label: 'Services', href: '#services' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'Projects', href: '#projects' },
-  { label: 'Social Wall', href: '#social-wall', isLive: true },
   { label: 'Learning', href: '#learning', isLearning: true },
   { label: 'Experience', href: '#experience' },
   { label: 'Education', href: '#education' },
@@ -162,12 +161,6 @@ export default function Navbar({
                     aria-current={isActive ? 'page' : undefined}
                   >
                     <span>{item.label}</span>
-                    {item.isLive && (
-                      <span className="relative flex h-2 w-2 ml-1.5" title="Live Sync Active">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                      </span>
-                    )}
                     {item.isLearning && (
                       <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-xs">
                         VIDEO
@@ -252,12 +245,6 @@ export default function Navbar({
                   >
                     <div className="flex items-center gap-2">
                       <span>{item.label}</span>
-                      {item.isLive && (
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                      )}
                     </div>
                     {item.isLearning && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-600 text-white shadow-xs">
