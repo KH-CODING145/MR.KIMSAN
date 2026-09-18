@@ -15,6 +15,17 @@ import BackToTop from './components/BackToTop';
 import PortfolioSkeleton from './components/PortfolioSkeleton';
 import ResumeModal from './components/ResumeModal';
 import CourseLearningModal from './components/CourseLearningModal';
+import SectionDivider from './components/SectionDivider';
+import {
+  Sparkles,
+  Code2,
+  Layers,
+  FolderGit2,
+  GraduationCap,
+  Briefcase,
+  BookOpen,
+  Send,
+} from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useMetaManager } from './hooks/useMetaManager';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
@@ -108,6 +119,8 @@ export default function App() {
           onOpenCourseModal={() => handleOpenCourseModal()}
         />
 
+        <SectionDivider icon={Sparkles} label="Overview" />
+
         {/* 2. About Section */}
         <About
           personal={portfolio.personal}
@@ -115,11 +128,17 @@ export default function App() {
           statistics={portfolio.statistics}
         />
 
+        <SectionDivider icon={Code2} label="Stack" />
+
         {/* 3. Skills Section */}
         <Skills skills={portfolio.skills as any} />
 
+        <SectionDivider icon={Layers} label="Offerings" />
+
         {/* 4. Services Section */}
         <Services services={portfolio.services} />
+
+        <SectionDivider icon={FolderGit2} label="Work" />
 
         {/* 5. Projects Section with Active Project Tracking */}
         <Projects
@@ -128,17 +147,25 @@ export default function App() {
           onSelectProject={setActiveProject}
         />
 
+        <SectionDivider icon={GraduationCap} label="Learning" />
+
         {/* 6. Course & Video Lessons Section */}
         <Courses onOpenCourseModal={handleOpenCourseModal} />
 
+        <SectionDivider icon={Briefcase} label="Career" />
+
         {/* 7. Experience Section */}
         <Experience experience={portfolio.experience} />
+
+        <SectionDivider icon={BookOpen} label="Academic" />
 
         {/* 8. Education Section */}
         <Education
           education={portfolio.education}
           onOpenCourseModal={() => handleOpenCourseModal()}
         />
+
+        <SectionDivider icon={Send} label="Connect" />
 
         {/* 9. Contact Section */}
         <Contact personal={portfolio.personal} social={portfolio.social} />
