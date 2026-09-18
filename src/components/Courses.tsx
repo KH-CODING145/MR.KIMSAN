@@ -12,7 +12,8 @@ import {
   Video,
   Layers,
   Search,
-  ExternalLink
+  ExternalLink,
+  Smartphone
 } from 'lucide-react';
 import { Course, sampleCourses } from '../data/coursesData';
 
@@ -153,9 +154,15 @@ export default function Courses({ onOpenCourseModal }: CoursesProps) {
 
                   {/* Top Badges */}
                   <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 dark:bg-slate-900/90 text-indigo-600 dark:text-indigo-400 backdrop-blur-md shadow-xs">
-                      {course.category}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 dark:bg-slate-900/90 text-indigo-600 dark:text-indigo-400 backdrop-blur-md shadow-xs">
+                        {course.category}
+                      </span>
+                      <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-950/80 text-cyan-300 border border-cyan-500/30 backdrop-blur-md">
+                        <Smartphone className="w-2.5 h-2.5 rotate-90" />
+                        <span>ផ្ដេកទូរស័ព្ទ</span>
+                      </span>
+                    </div>
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-black/60 text-white backdrop-blur-md">
                       <Clock className="w-3 h-3" />
                       {course.totalDuration}
