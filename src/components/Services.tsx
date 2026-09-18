@@ -17,6 +17,7 @@ interface ServiceItem {
   description: string;
   icon: string;
   features: string[];
+  startingPrice?: string;
 }
 
 interface ServicesProps {
@@ -67,9 +68,16 @@ export default function Services({ services }: ServicesProps) {
                 className="flex flex-col justify-between p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-500/50 dark:hover:border-indigo-500/50 hover:shadow-xl transition-all duration-300 group"
               >
                 <div>
-                  {/* Service Icon */}
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-100 dark:border-indigo-900/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-xs">
-                    <Icon className="w-7 h-7 transition-colors duration-300" />
+                  {/* Top Bar: Service Icon & Starting Price */}
+                  <div className="flex items-center justify-between gap-3 mb-6">
+                    <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-100 dark:border-indigo-900/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                      <Icon className="w-7 h-7 transition-colors duration-300" />
+                    </div>
+                    {service.startingPrice && (
+                      <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80">
+                        From <span className="text-indigo-600 dark:text-indigo-400 font-bold">{service.startingPrice}</span>
+                      </span>
+                    )}
                   </div>
 
                   {/* Title & Description */}
@@ -91,24 +99,43 @@ export default function Services({ services }: ServicesProps) {
                   </div>
                 </div>
 
-                {/* Bottom Action */}
-                <a
-                  href="#contact"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const el = document.getElementById('contact');
-                    if (el) {
-                      const headerOffset = 76;
-                      const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-                      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                      history.pushState(null, '', '#contact');
-                    }
-                  }}
-                  className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 pt-2 cursor-pointer"
-                >
-                  <span>Request service</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </a>
+                {/* Bottom Actions */}
+                <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800/60">
+                  <a
+                    href="#pricing"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const el = document.getElementById('pricing');
+                      if (el) {
+                        const headerOffset = 76;
+                        const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        history.pushState(null, '', '#pricing');
+                      }
+                    }}
+                    className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors cursor-pointer"
+                  >
+                    View Plans &rarr;
+                  </a>
+
+                  <a
+                    href="#contact"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const el = document.getElementById('contact');
+                      if (el) {
+                        const headerOffset = 76;
+                        const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        history.pushState(null, '', '#contact');
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 cursor-pointer"
+                  >
+                    <span>Inquire</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
               </motion.div>
             );
           })}

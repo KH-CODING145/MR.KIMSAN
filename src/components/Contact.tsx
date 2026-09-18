@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import {
   Mail,
@@ -12,6 +12,8 @@ import {
   ArrowRight,
   Navigation,
   ExternalLink,
+  CreditCard,
+  X,
 } from 'lucide-react';
 
 interface ContactProps {
@@ -24,6 +26,8 @@ interface ContactProps {
   social: {
     telegram: string;
   };
+  selectedPlan?: { name: string; price: string } | null;
+  onClearPlan?: () => void;
 }
 
 interface FormState {
@@ -40,7 +44,7 @@ interface FormErrors {
   message?: string;
 }
 
-export default function Contact({ personal, social }: ContactProps) {
+export default function Contact({ personal, social, selectedPlan, onClearPlan }: ContactProps) {
   const [formData, setFormData] = useState<FormState>({
     name: '',
     email: '',
@@ -52,6 +56,19 @@ export default function Contact({ personal, social }: ContactProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (selectedPlan) {
+      setFormData((prev) => ({
+        ...prev,
+        subject: `Inquiry: ${selectedPlan.name} (${selectedPlan.price})`,
+        message: prev.message.trim().length > 0
+          ? prev.message
+          : `Hi Kim San,\n\nI'm interested in getting started with the ${selectedPlan.name} plan (${selectedPlan.price}). Here are the details of our project requirements: `,
+      }));
+      setErrors((prev) => ({ ...prev, subject: undefined }));
+    }
+  }, [selectedPlan]);
 
   const validate = (): boolean => {
     const errs: FormErrors = {};
@@ -296,6 +313,35 @@ export default function Contact({ personal, social }: ContactProps) {
                     <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
                       <AlertCircle className="w-4 h-4 shrink-0" />
                       <span>{errorMessage || 'There was a problem sending your message. Please try again.'}</span>
+                    </div>
+                  )}
+
+                  {/* Selected Plan Banner */}
+                  {selectedPlan && (
+                    <div className="flex items-center justify-between p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200/80 dark:border-indigo-800/80 text-xs text-indigo-950 dark:text-indigo-200">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                          <CreditCard className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-[10px] uppercase font-mono tracking-wider text-indigo-600 dark:text-indigo-400 font-semibold">
+                            Selected Plan
+                          </div>
+                          <div className="font-semibold text-slate-900 dark:text-white truncate">
+                            {selectedPlan.name} &bull; <span className="font-mono text-indigo-600 dark:text-indigo-400">{selectedPlan.price}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {onClearPlan && (
+                        <button
+                          type="button"
+                          onClick={onClearPlan}
+                          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer shrink-0 ml-2"
+                          title="Reset to general inquiry"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   )}
 

@@ -17,10 +17,12 @@ import ResumeModal from './components/ResumeModal';
 import CourseLearningModal from './components/CourseLearningModal';
 import SectionDivider from './components/SectionDivider';
 import SocialWall from './components/SocialWall';
+import Pricing from './components/Pricing';
 import {
   Sparkles,
   Code2,
   Layers,
+  CreditCard,
   FolderGit2,
   Radio,
   GraduationCap,
@@ -38,6 +40,7 @@ const SECTION_IDS = [
   'about',
   'skills',
   'services',
+  'pricing',
   'projects',
   'social-wall',
   'learning',
@@ -54,6 +57,7 @@ export default function App() {
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string | undefined>();
   const [selectedLessonId, setSelectedLessonId] = useState<string | undefined>();
+  const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string } | null>(null);
 
   // Open course modal helper
   const handleOpenCourseModal = (courseId?: string, lessonId?: string) => {
@@ -141,6 +145,11 @@ export default function App() {
         {/* 4. Services Section */}
         <Services services={portfolio.services} />
 
+        <SectionDivider icon={CreditCard} label="Pricing" />
+
+        {/* 4.5 Plans & Pricing Section */}
+        <Pricing onSelectPlan={(name, price) => setSelectedPlan({ name, price })} />
+
         <SectionDivider icon={FolderGit2} label="Work" />
 
         {/* 5. Projects Section with Active Project Tracking */}
@@ -176,7 +185,12 @@ export default function App() {
         <SectionDivider icon={Send} label="Connect" />
 
         {/* 9. Contact Section */}
-        <Contact personal={portfolio.personal} social={portfolio.social} />
+        <Contact
+          personal={portfolio.personal}
+          social={portfolio.social}
+          selectedPlan={selectedPlan}
+          onClearPlan={() => setSelectedPlan(null)}
+        />
       </main>
 
       {/* Footer */}

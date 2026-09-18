@@ -286,6 +286,7 @@ export const portfolio = {
       title: "AI & Software Engineering",
       description: "Build intelligent software and web applications with AI and LLMs.",
       icon: "Sparkles",
+      startingPrice: "$1,899",
       features: [
         "Gemini, OpenAI & Claude API integration",
         "Autonomous AI agent loops & automated workflows",
@@ -298,6 +299,7 @@ export const portfolio = {
       title: "Web Development",
       description: "Build modern responsive websites and web applications.",
       icon: "Globe",
+      startingPrice: "$799",
       features: [
         "Single Page Applications (SPA)",
         "Progressive Web Apps (PWA)",
@@ -310,6 +312,7 @@ export const portfolio = {
       title: "Full-Stack Development",
       description: "Frontend + backend + API + database integration.",
       icon: "Layers",
+      startingPrice: "$1,899",
       features: [
         "End-to-end architecture design",
         "React frontend with Express/Laravel",
@@ -322,6 +325,7 @@ export const portfolio = {
       title: "Admin Dashboard",
       description: "Build modern administration dashboards.",
       icon: "LayoutDashboard",
+      startingPrice: "$1,299",
       features: [
         "Real-time analytics & KPIs",
         "Interactive data visualizations",
@@ -334,6 +338,7 @@ export const portfolio = {
       title: "API Development",
       description: "REST API development and integration.",
       icon: "Network",
+      startingPrice: "$899",
       features: [
         "Clean RESTful contract design",
         "OpenAPI / Swagger documentation",
@@ -346,6 +351,7 @@ export const portfolio = {
       title: "UI Development",
       description: "Responsive and user-friendly interfaces.",
       icon: "Sparkles",
+      startingPrice: "$699",
       features: [
         "Pixel-perfect component engineering",
         "Smooth micro-interactions & animations",
@@ -358,6 +364,7 @@ export const portfolio = {
       title: "Software Development",
       description: "Desktop and automation software development.",
       icon: "Cpu",
+      startingPrice: "$1,199",
       features: [
         "Cross-platform desktop utilities",
         "Automated background processing tasks",

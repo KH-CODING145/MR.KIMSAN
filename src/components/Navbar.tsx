@@ -20,6 +20,7 @@ const navItems = [
   { label: 'About', href: '#about' },
   { label: 'Skills', href: '#skills' },
   { label: 'Services', href: '#services' },
+  { label: 'Pricing', href: '#pricing' },
   { label: 'Projects', href: '#projects' },
   { label: 'Feed', href: '#social-wall' },
   { label: 'Learning', href: '#learning', isLearning: true },
