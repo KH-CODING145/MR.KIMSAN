@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Mr. KIM SAN — Full-Stack Developer & AI Software Engineer</title>
+    <meta name="description" content="Professional portfolio of PRO DIGITAL by Mr.KIM SAN, a Full-Stack Developer engineering modern web applications and building intelligent software solutions with AI." />
+    <meta name="keywords" content="PRO DIGITAL, Mr.KIM SAN, Full-Stack Developer, AI Software Engineer, Build Software with AI, AI Software Engineering, Gemini, React, TypeScript, Node.js, Laravel, Portfolio" />
+    <meta name="author" content="Mr.KIM SAN" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://kimsan.dev/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mr. KIM SAN — Full-Stack Developer & AI Software Engineer" />
+    <meta property="og:description" content="Engineering high-performance full-stack web applications and building intelligent software solutions with AI." />
+    <meta property="og:site_name" content="PRO DIGITAL" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mr. KIM SAN — Full-Stack Developer & AI Software Engineer" />
+    <meta name="twitter:description" content="Engineering high-performance full-stack web applications and building intelligent software solutions with AI." />
+
+    <!-- Google Fonts: Plus Jakarta Sans for body, JetBrains Mono for code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Custom Fonts: Pervitina Dex & A4 Speed from Dafont -->
+    <link rel="preload" href="/fonts/PervitinaDex.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/fonts/A4Speed.ttf" as="font" type="font/ttf" crossorigin>
+
+    <!-- Theme Initialization Script (Prevent Theme Flash) -->
+    <script>
+      (function() {
+        try {
+          const storedTheme = localStorage.getItem('portfolio-theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (storedTheme === 'dark' || (!storedTheme && prefersDark) || storedTheme === 'system' && prefersDark) {
+            document.documentElement.classList.add('dark');
+          } else if (storedTheme === 'light') {
+            document.documentElement.classList.remove('dark');
+          } else {
+            // Default to dark as specified in prompt
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <!-- Schema.org Structured Data -->
+    <script id="portfolio-structured-data" type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Mr.KIM SAN",
+      "jobTitle": "Full-Stack Developer",
+      "description": "Full-Stack Developer building modern, scalable web applications and software solutions with PRO DIGITAL.",
+      "url": "https://kimsan.dev",
+      "sameAs": [
+        "https://github.com",
+        "https://linkedin.com"
+      ],
+      "knowsAbout": ["React", "JavaScript", "TypeScript", "Node.js", "Laravel", "Tailwind CSS", "PostgreSQL", "REST APIs"]
+    }
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <defs>
+    <linearGradient id="p1g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#p1g)" />
+  <!-- Window frame -->
+  <rect x="30" y="30" width="580" height="340" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+  <!-- Header bar -->
+  <rect x="30" y="30" width="580" height="40" rx="12" fill="#1e293b" />
+  <circle cx="55" cy="50" r="5" fill="#ef4444" />
+  <circle cx="70" cy="50" r="5" fill="#f59e0b" />
+  <circle cx="85" cy="50" r="5" fill="#10b981" />
+  <rect x="180" y="42" width="280" height="16" rx="8" fill="#334155" opacity="0.6" />
+  <!-- Dashboard layout -->
+  <!-- Sidebar -->
+  <rect x="45" y="85" width="100" height="270" rx="8" fill="#1e293b" opacity="0.7" />
+  <rect x="60" y="105" width="70" height="12" rx="4" fill="#6366f1" />
+  <rect x="60" y="130" width="60" height="10" rx="3" fill="#64748b" />
+  <rect x="60" y="150" width="65" height="10" rx="3" fill="#64748b" />
+  <rect x="60" y="170" width="50" height="10" rx="3" fill="#64748b" />
+  <!-- Main content -->
+  <!-- Stat cards -->
+  <rect x="160" y="85" width="135" height="70" rx="8" fill="#1e293b" stroke="#334155" />
+  <text x="175" y="110" fill="#94a3b8" font-size="11" font-family="sans-serif">Active Clusters</text>
+  <text x="175" y="138" fill="#f8fafc" font-size="20" font-weight="bold" font-family="sans-serif">48 / 50</text>
+  
+  <rect x="310" y="85" width="135" height="70" rx="8" fill="#1e293b" stroke="#334155" />
+  <text x="325" y="110" fill="#94a3b8" font-size="11" font-family="sans-serif">Throughput</text>
+  <text x="325" y="138" fill="#10b981" font-size="20" font-weight="bold" font-family="sans-serif">2.4M req/s</text>
+
+  <rect x="460" y="85" width="135" height="70" rx="8" fill="#1e293b" stroke="#334155" />
+  <text x="475" y="110" fill="#94a3b8" font-size="11" font-family="sans-serif">Latency</text>
+  <text x="475" y="138" fill="#38bdf8" font-size="20" font-weight="bold" font-family="sans-serif">14 ms</text>
+
+  <!-- Big Chart -->
+  <rect x="160" y="170" width="435" height="185" rx="8" fill="#1e293b" stroke="#334155" />
+  <path d="M 180 320 Q 250 220 320 280 T 460 210 T 570 230" fill="none" stroke="#6366f1" stroke-width="3.5" />
+  <path d="M 180 320 Q 250 220 320 280 T 460 210 T 570 230 L 570 340 L 180 340 Z" fill="#6366f1" fill-opacity="0.15" />
+</svg>

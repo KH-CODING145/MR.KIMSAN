@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <defs>
+    <linearGradient id="p5g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="100%" stop-color="#14532d" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#p5g)" />
+  <rect x="30" y="30" width="580" height="340" rx="12" fill="#052e16" stroke="#15803d" stroke-width="1.5" />
+  <rect x="30" y="30" width="580" height="40" rx="12" fill="#14532d" />
+  <circle cx="55" cy="50" r="5" fill="#ef4444" />
+  <circle cx="70" cy="50" r="5" fill="#f59e0b" />
+  <circle cx="85" cy="50" r="5" fill="#10b981" />
+  <text x="115" y="55" fill="#86efac" font-size="13" font-family="monospace">FinancePulse // Global Assets</text>
+  <!-- Balance Card -->
+  <rect x="55" y="90" width="260" height="110" rx="8" fill="#166534" stroke="#22c55e" />
+  <text x="75" y="120" fill="#bbf7d0" font-size="12" font-family="sans-serif">Portfolio Valuation</text>
+  <text x="75" y="155" fill="#ffffff" font-size="28" font-weight="bold" font-family="sans-serif">$384,920.40</text>
+  <text x="75" y="180" fill="#86efac" font-size="12" font-weight="bold" font-family="sans-serif">+14.2% YTD</text>
+
+  <!-- Allocation Breakdown -->
+  <rect x="330" y="90" width="250" height="110" rx="8" fill="#166534" stroke="#22c55e" />
+  <text x="350" y="120" fill="#bbf7d0" font-size="12" font-family="sans-serif">Asset Allocation</text>
+  <rect x="350" y="140" width="120" height="14" rx="3" fill="#22c55e" />
+  <rect x="475" y="140" width="50" height="14" rx="3" fill="#38bdf8" />
+  <rect x="530" y="140" width="30" height="14" rx="3" fill="#fbbf24" />
+  <text x="350" y="180" fill="#dcfce7" font-size="11" font-family="monospace">Equities 60% | Fixed 25% | Crypto 15%</text>
+
+  <!-- Transactions table -->
+  <rect x="55" y="220" width="525" height="130" rx="8" fill="#052e16" stroke="#166534" />
+  <text x="75" y="250" fill="#bbf7d0" font-size="12" font-family="monospace">TXN #8401 &bull; Automated Rebalance: Sold SPY, Bought VTI (+$1,200)</text>
+  <text x="75" y="280" fill="#86efac" font-size="12" font-family="monospace">TXN #8402 &bull; Dividend Reinvestment: MSFT (+$340.50)</text>
+  <text x="75" y="310" fill="#4ade80" font-size="12" font-family="monospace">Tax-Loss Harvesting: Triggered 0 losses detected</text>
+</svg>

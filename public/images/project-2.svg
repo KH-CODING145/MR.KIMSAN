@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <defs>
+    <linearGradient id="p2g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#p2g)" />
+  <rect x="30" y="30" width="580" height="340" rx="12" fill="#061814" stroke="#134e4a" stroke-width="1.5" />
+  <rect x="30" y="30" width="580" height="40" rx="12" fill="#042f2e" />
+  <circle cx="55" cy="50" r="5" fill="#ef4444" />
+  <circle cx="70" cy="50" r="5" fill="#f59e0b" />
+  <circle cx="85" cy="50" r="5" fill="#10b981" />
+  <text x="115" y="55" fill="#5eead4" font-size="13" font-family="monospace">build: pipeline #492 [passed]</text>
+  <!-- CI/CD Nodes -->
+  <rect x="60" y="100" width="150" height="100" rx="8" fill="#115e59" opacity="0.4" stroke="#14b8a6" />
+  <text x="75" y="130" fill="#a7f3d0" font-weight="bold" font-size="14" font-family="sans-serif">Lint &amp; Unit Tests</text>
+  <text x="75" y="155" fill="#5eead4" font-size="12" font-family="monospace">142 passed (1.2s)</text>
+  <line x1="210" y1="150" x2="250" y2="150" stroke="#14b8a6" stroke-width="3" stroke-dasharray="4 4" />
+  <rect x="250" y="100" width="150" height="100" rx="8" fill="#115e59" opacity="0.4" stroke="#14b8a6" />
+  <text x="265" y="130" fill="#a7f3d0" font-weight="bold" font-size="14" font-family="sans-serif">Docker Container</text>
+  <text x="265" y="155" fill="#5eead4" font-size="12" font-family="monospace">arm64 &amp; amd64</text>
+  <line x1="400" y1="150" x2="440" y2="150" stroke="#14b8a6" stroke-width="3" stroke-dasharray="4 4" />
+  <rect x="440" y="100" width="140" height="100" rx="8" fill="#115e59" opacity="0.4" stroke="#14b8a6" />
+  <text x="455" y="130" fill="#a7f3d0" font-weight="bold" font-size="14" font-family="sans-serif">Deploy to Cloud</text>
+  <text x="455" y="155" fill="#34d399" font-size="12" font-family="monospace">100% healthy</text>
+  <!-- Console log terminal -->
+  <rect x="60" y="220" width="520" height="130" rx="8" fill="#021a16" stroke="#134e4a" />
+  <text x="80" y="245" fill="#2dd4bf" font-size="12" font-family="monospace">&gt; git checkout release/v2.4.0</text>
+  <text x="80" y="270" fill="#6ee7b7" font-size="12" font-family="monospace">&gt; docker build -t registry/devflow:latest .</text>
+  <text x="80" y="295" fill="#a7f3d0" font-size="12" font-family="monospace">&gt; kubernetes rolling update completed without downtime.</text>
+</svg>

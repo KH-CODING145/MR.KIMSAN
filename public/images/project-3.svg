@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <defs>
+    <linearGradient id="p3g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="100%" stop-color="#450a0a" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#p3g)" />
+  <rect x="30" y="30" width="580" height="340" rx="12" fill="#180c0e" stroke="#7f1d1d" stroke-width="1.5" />
+  <rect x="30" y="30" width="580" height="40" rx="12" fill="#2e1015" />
+  <circle cx="55" cy="50" r="5" fill="#ef4444" />
+  <circle cx="70" cy="50" r="5" fill="#f59e0b" />
+  <circle cx="85" cy="50" r="5" fill="#10b981" />
+  <text x="115" y="55" fill="#f87171" font-size="13" font-family="monospace">laravel-storefront: /api/v2/orders</text>
+  <!-- Products grid -->
+  <rect x="55" y="90" width="165" height="150" rx="8" fill="#2d1217" stroke="#991b1b" />
+  <rect x="70" y="105" width="135" height="70" rx="6" fill="#4c0519" />
+  <text x="70" y="195" fill="#fecdd3" font-weight="bold" font-size="13" font-family="sans-serif">Mechanical Switch Kit</text>
+  <text x="70" y="220" fill="#f43f5e" font-weight="bold" font-size="14" font-family="sans-serif">$129.00</text>
+
+  <rect x="235" y="90" width="165" height="150" rx="8" fill="#2d1217" stroke="#991b1b" />
+  <rect x="250" y="105" width="135" height="70" rx="6" fill="#4c0519" />
+  <text x="250" y="195" fill="#fecdd3" font-weight="bold" font-size="13" font-family="sans-serif">Anodized Keycaps</text>
+  <text x="250" y="220" fill="#f43f5e" font-weight="bold" font-size="14" font-family="sans-serif">$79.00</text>
+
+  <rect x="415" y="90" width="165" height="150" rx="8" fill="#2d1217" stroke="#991b1b" />
+  <rect x="430" y="105" width="135" height="70" rx="6" fill="#4c0519" />
+  <text x="430" y="195" fill="#fecdd3" font-weight="bold" font-size="13" font-family="sans-serif">Desk Mat Minimalist</text>
+  <text x="430" y="220" fill="#f43f5e" font-weight="bold" font-size="14" font-family="sans-serif">$35.00</text>
+
+  <!-- Checkout / API status -->
+  <rect x="55" y="260" width="525" height="90" rx="8" fill="#240c11" stroke="#991b1b" />
+  <text x="75" y="290" fill="#fda4af" font-size="13" font-family="monospace">POST /checkout/stripe-webhook &rarr; 200 OK</text>
+  <text x="75" y="320" fill="#9f1239" font-size="12" font-family="monospace">Inventory sync dispatched via RabbitMQ queue workers</text>
+</svg>
