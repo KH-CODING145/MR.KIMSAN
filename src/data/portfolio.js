@@ -379,6 +379,8 @@ export const portfolio = {
       demoUrl: "https://cloudpulse-saas-demo.com",
       githubUrl: "https://github.com/kimsan/cloudpulse-saas",
       highlight: "Full-Stack & AI",
+      dateCompleted: "August 2024",
+      lastUpdated: "August 2024",
     },
     {
       id: 2,
@@ -391,6 +393,8 @@ export const portfolio = {
       demoUrl: "https://devflow-pipeline.netlify.app",
       githubUrl: "https://github.com/kimsan/devflow-pipeline",
       highlight: "Developer Tool",
+      dateCompleted: "July 2024",
+      lastUpdated: "July 2024",
     },
     {
       id: 3,
@@ -403,6 +407,8 @@ export const portfolio = {
       demoUrl: "https://apexcraft-store.example.com",
       githubUrl: "https://github.com/kimsan/apexcraft-store",
       highlight: "High Concurrency",
+      dateCompleted: "May 2024",
+      lastUpdated: "May 2024",
     },
     {
       id: 4,
@@ -415,6 +421,8 @@ export const portfolio = {
       demoUrl: "https://collabsync-studio.example.com",
       githubUrl: "https://github.com/kimsan/collabsync-studio",
       highlight: "Real-time Sync",
+      dateCompleted: "April 2024",
+      lastUpdated: "April 2024",
     },
     {
       id: 5,
@@ -427,6 +435,8 @@ export const portfolio = {
       demoUrl: "https://financepulse-ledger.example.com",
       githubUrl: "https://github.com/kimsan/financepulse-ledger",
       highlight: "Data Visualization",
+      dateCompleted: "February 2024",
+      lastUpdated: "February 2024",
     },
     {
       id: 6,
@@ -439,6 +449,8 @@ export const portfolio = {
       demoUrl: "", // Empty URL test case - button should gracefully hide
       githubUrl: "https://github.com/kimsan/taskdaemon-suite",
       highlight: "AI Software & Automation",
+      dateCompleted: "January 2024",
+      lastUpdated: "January 2024",
     },
   ],
 

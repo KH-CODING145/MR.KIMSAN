@@ -10,6 +10,8 @@ import {
   Loader2,
   MessageSquare,
   ArrowRight,
+  Navigation,
+  ExternalLink,
 } from 'lucide-react';
 
 interface ContactProps {
@@ -200,17 +202,31 @@ export default function Contact({ personal, social }: ContactProps) {
                 )}
 
                 {/* Location Item */}
-                <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                <a
+                  href="#office-map"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById('office-map');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 transition-colors group cursor-pointer"
+                  title="View PRO SOFTWARE on Map"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <MapPin className="w-5 h-5" />
                   </div>
-                  <div>
-                    <div className="text-xs text-slate-400 font-medium">Location</div>
-                    <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                      {personal.location}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-slate-400 font-medium">Studio / Office</div>
+                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium group-hover:underline">
+                        View Map &darr;
+                      </span>
+                    </div>
+                    <div className="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                      PRO SOFTWARE &bull; {personal.location}
                     </div>
                   </div>
-                </div>
+                </a>
 
                 {/* Telegram Item */}
                 {social.telegram && (
@@ -416,6 +432,67 @@ export default function Contact({ personal, social }: ContactProps) {
             </div>
           </motion.div>
         </div>
+
+        {/* Interactive Google Map Section: PRO SOFTWARE */}
+        <motion.div
+          id="office-map"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mt-14 max-w-6xl mx-auto rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl"
+        >
+          {/* Header Bar */}
+          <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/80 dark:bg-slate-950/60">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    Office &amp; Engineering Studio
+                  </h3>
+                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/90 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                    PRO SOFTWARE
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Phnom Penh, Cambodia &bull; ទីតាំងការិយាល័យ និងស្ទូឌីយោ PRO SOFTWARE
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <a
+                href="https://www.google.com/maps/place/PRO+SOFTWARE/@11.5545709,104.880091,19z/data=!4m6!3m5!1s0x310951a5f528099b:0xbd2c54dbfc079870!8m2!3d11.5545709!4d104.880091!16s%2Fg%2F11w2_w_98y?entry=ttu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 transition-all shadow-xs cursor-pointer"
+                title="Open in Google Maps to get direct directions"
+              >
+                <Navigation className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>Get Directions (ទិសដៅផ្លូវ)</span>
+                <ExternalLink className="w-3 h-3 text-slate-400" />
+              </a>
+            </div>
+          </div>
+
+          {/* Embedded Google Map iframe */}
+          <div className="relative w-full h-[360px] sm:h-[440px] bg-slate-100 dark:bg-slate-950">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1954.4810765389395!2d104.88009095191954!3d11.554570944960835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310951a5f528099b%3A0xbd2c54dbfc079870!2sPRO%20SOFTWARE!5e0!3m2!1sen!2skh!4v1789718298346!5m2!1sen!2skh"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              title="PRO SOFTWARE Location Map"
+              className="w-full h-full"
+            />
+          </div>
+        </motion.div>
       </div>
     </section>
   );

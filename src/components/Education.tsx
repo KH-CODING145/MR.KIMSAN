@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react';
-import { GraduationCap, Award, Calendar, BookOpen } from 'lucide-react';
+import { GraduationCap, Award, Calendar, BookOpen, Video, Play, ArrowRight } from 'lucide-react';
 
 interface EducationItem {
   institution: string;
@@ -12,9 +12,10 @@ interface EducationItem {
 
 interface EducationProps {
   education: EducationItem[];
+  onOpenCourseModal?: () => void;
 }
 
-export default function Education({ education }: EducationProps) {
+export default function Education({ education, onOpenCourseModal }: EducationProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -87,6 +88,39 @@ export default function Education({ education }: EducationProps) {
             </motion.div>
           ))}
         </div>
+
+        {/* Online Video Lessons Callout */}
+        {onOpenCourseModal && (
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
+            className="mt-12 max-w-5xl mx-auto p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-indigo-100 dark:border-indigo-900/60 shadow-md flex flex-col sm:flex-row items-center justify-between gap-6"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                <Video className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                  Continuous Learning &amp; Video Hub (វីដេអូមេរៀនអនឡាញ)
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">
+                  Explore practical developer masterclasses in React 19, Laravel 11, Node.js, and Python AI automation.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onOpenCourseModal}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 hover:scale-105 transition-all cursor-pointer whitespace-nowrap"
+            >
+              <Play className="w-4 h-4 fill-white" />
+              <span>Watch Video Lessons</span>
+            </button>
+          </motion.div>
+        )}
       </div>
     </section>
   );

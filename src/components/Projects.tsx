@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { ExternalLink, Github, Sparkles, Eye, X, Code2, Search, Terminal } from 'lucide-react';
+import { ExternalLink, Github, Sparkles, Eye, X, Code2, Search, Terminal, Calendar } from 'lucide-react';
 import SourceCodeViewerModal from './SourceCodeViewerModal';
 
 export interface ProjectItem {
@@ -13,6 +13,8 @@ export interface ProjectItem {
   demoUrl: string;
   githubUrl: string;
   highlight?: string;
+  dateCompleted?: string;
+  lastUpdated?: string;
 }
 
 interface ProjectsProps {
@@ -60,11 +62,17 @@ export default function Projects({
     return () => window.removeEventListener('hashchange', handleHash);
   }, [projects]);
 
-  const filterCategories = ['All', 'React', 'Laravel', 'Full Stack', 'Web', 'Software'];
+  // Tech stack & category filter options
+  const filterCategories = ['All', 'React', 'Laravel', 'Node.js', 'Python', 'Full Stack'];
 
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {
-      const matchesCategory = activeFilter === 'All' || p.category === activeFilter;
+      const filterLower = activeFilter.toLowerCase();
+      const matchesCategory =
+        activeFilter === 'All' ||
+        p.category.toLowerCase() === filterLower ||
+        p.technologies.some((t) => t.toLowerCase() === filterLower);
+
       const query = searchQuery.trim().toLowerCase();
       if (!query) return matchesCategory;
 
@@ -72,7 +80,9 @@ export default function Projects({
         p.title.toLowerCase().includes(query) ||
         p.description.toLowerCase().includes(query) ||
         p.technologies.some((t) => t.toLowerCase().includes(query)) ||
-        (p.highlight && p.highlight.toLowerCase().includes(query));
+        (p.highlight && p.highlight.toLowerCase().includes(query)) ||
+        (p.dateCompleted && p.dateCompleted.toLowerCase().includes(query)) ||
+        (p.lastUpdated && p.lastUpdated.toLowerCase().includes(query));
 
       return matchesCategory && matchesQuery;
     });
@@ -97,17 +107,17 @@ export default function Projects({
 
         {/* Filter & Search Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-          {/* Category Tabs */}
-          <div className="flex flex-wrap justify-center sm:justify-start gap-2 w-full sm:w-auto" role="tablist" aria-label="Project Categories">
+          {/* Tech Stack & Category Tabs */}
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full sm:w-auto" role="tablist" aria-label="Project Tech Stacks and Categories">
             {filterCategories.map((filter) => {
-              const isActive = activeFilter === filter;
+              const isActive = activeFilter.toLowerCase() === filter.toLowerCase();
               return (
                 <button
                   key={filter}
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer ${
                     isActive
                       ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 scale-105'
                       : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
@@ -117,6 +127,21 @@ export default function Projects({
                 </button>
               );
             })}
+
+            {/* Custom active tech stack badge if selected via tag click */}
+            {!filterCategories.map((c) => c.toLowerCase()).includes(activeFilter.toLowerCase()) && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md shadow-indigo-600/25">
+                <span>Tech: {activeFilter}</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveFilter('All')}
+                  className="hover:text-indigo-200 cursor-pointer"
+                  aria-label="Clear custom filter"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            )}
           </div>
 
           {/* Real-time Project Search Box */}
@@ -133,7 +158,7 @@ export default function Projects({
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                 aria-label="Clear search"
               >
                 <X className="w-3.5 h-3.5" />
@@ -165,8 +190,17 @@ export default function Projects({
                 initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
+                whileHover={
+                  shouldReduceMotion
+                    ? undefined
+                    : {
+                        y: -8,
+                        scale: 1.02,
+                        transition: { duration: 0.25, ease: 'easeOut' },
+                      }
+                }
                 transition={{ duration: 0.3 }}
-                className="flex flex-col justify-between rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs hover:border-indigo-500/50 dark:hover:border-indigo-500/50 hover:shadow-xl transition-all duration-300 group"
+                className="flex flex-col justify-between rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:border-indigo-500/50 dark:hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10 dark:hover:shadow-indigo-950/40 transition-shadow duration-300 group"
               >
                 {/* Project Image & Overlay */}
                 <div>
@@ -220,6 +254,22 @@ export default function Projects({
 
                   {/* Card Body */}
                   <div className="p-6">
+                    {/* Category & Date Completed / Last Updated Header */}
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                        {project.category}
+                      </span>
+                      {(project.dateCompleted || project.lastUpdated) && (
+                        <div
+                          className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shadow-xs"
+                          title={`Completed / Last Updated: ${project.dateCompleted || project.lastUpdated}`}
+                        >
+                          <Calendar className="w-3 h-3 text-indigo-500 shrink-0" />
+                          <span>{project.dateCompleted || project.lastUpdated}</span>
+                        </div>
+                      )}
+                    </div>
+
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                       {project.title}
                     </h3>
@@ -227,16 +277,26 @@ export default function Projects({
                       {project.description}
                     </p>
 
-                    {/* Technologies tags */}
+                    {/* Technologies tags - clickable for quick tech stack filtering */}
                     <div className="flex flex-wrap gap-1.5 mb-6">
-                      {project.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+                      {project.technologies.map((tech) => {
+                        const isSelectedTech = activeFilter.toLowerCase() === tech.toLowerCase();
+                        return (
+                          <button
+                            key={tech}
+                            type="button"
+                            onClick={() => setActiveFilter(isSelectedTech ? 'All' : tech)}
+                            title={`Filter projects by ${tech}`}
+                            className={`px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer ${
+                              isSelectedTech
+                                ? 'bg-indigo-600 text-white shadow-xs'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200/60 dark:border-slate-700/60'
+                            }`}
+                          >
+                            {tech}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -327,10 +387,16 @@ export default function Projects({
                   />
                 </div>
 
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60">
                     {selectedProject.category}
                   </span>
+                  {(selectedProject.dateCompleted || selectedProject.lastUpdated) && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      <Calendar className="w-3.5 h-3.5 text-indigo-500" />
+                      <span>Completed: {selectedProject.dateCompleted || selectedProject.lastUpdated}</span>
+                    </span>
+                  )}
                   {selectedProject.highlight && (
                     <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400">
                       &bull; {selectedProject.highlight}

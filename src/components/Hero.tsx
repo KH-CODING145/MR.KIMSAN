@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowRight, Github, Linkedin, Facebook, Send, Youtube, Terminal, Sparkles, CheckCircle, GraduationCap, Languages } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Facebook, Send, Youtube, Terminal, Sparkles, CheckCircle, GraduationCap, Languages, Video, Play } from 'lucide-react';
 import TypewriterTitle from './TypewriterTitle';
 
 interface HeroProps {
@@ -22,9 +22,10 @@ interface HeroProps {
     youtube: string;
   };
   onOpenResume?: () => void;
+  onOpenCourseModal?: () => void;
 }
 
-export default function Hero({ personal, social, onOpenResume }: HeroProps) {
+export default function Hero({ personal, social, onOpenResume, onOpenCourseModal }: HeroProps) {
   const shouldReduceMotion = useReducedMotion();
 
   const socialLinks = [
@@ -135,16 +136,17 @@ export default function Hero({ personal, social, onOpenResume }: HeroProps) {
                 id="hero-course-learning-btn"
                 type="button"
                 onClick={() => {
-                  if (onOpenResume) {
-                    onOpenResume();
+                  if (onOpenCourseModal) {
+                    onOpenCourseModal();
                   } else {
-                    const el = document.getElementById('education');
+                    const el = document.getElementById('learning') || document.getElementById('education');
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold text-sm border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-95 transition-all duration-200 shadow-xs cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold text-sm border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-95 transition-all duration-200 shadow-xs cursor-pointer group"
+                title="Watch Online Courses & Video Lessons (វីដេអូមេរៀន)"
               >
-                <GraduationCap className="w-4 h-4 text-indigo-500" />
+                <Video className="w-4 h-4 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform" />
                 <span>COURSE/LEARNING</span>
               </button>
             </div>

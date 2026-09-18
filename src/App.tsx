@@ -6,6 +6,7 @@ import About from './components/About';
 import Skills from './components/Skills';
 import Services from './components/Services';
 import Projects, { ProjectItem } from './components/Projects';
+import Courses from './components/Courses';
 import Experience from './components/Experience';
 import Education from './components/Education';
 import Contact from './components/Contact';
@@ -14,6 +15,7 @@ import BackToTop from './components/BackToTop';
 import PortfolioSkeleton from './components/PortfolioSkeleton';
 import PortfolioAppSourceModal from './components/PortfolioAppSourceModal';
 import ResumeModal from './components/ResumeModal';
+import CourseLearningModal from './components/CourseLearningModal';
 import { useTheme } from './hooks/useTheme';
 import { useMetaManager } from './hooks/useMetaManager';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
@@ -25,6 +27,7 @@ const SECTION_IDS = [
   'skills',
   'services',
   'projects',
+  'learning',
   'experience',
   'education',
   'contact',
@@ -36,6 +39,24 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPortfolioSourceOpen, setIsPortfolioSourceOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
+  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState<string | undefined>();
+  const [selectedLessonId, setSelectedLessonId] = useState<string | undefined>();
+
+  // Open course modal helper
+  const handleOpenCourseModal = (courseId?: string, lessonId?: string) => {
+    setSelectedCourseId(courseId);
+    setSelectedLessonId(lessonId);
+    setIsCourseModalOpen(true);
+  };
+
+  // Open course modal if hash indicates #courses or #learning-modal
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash === '#learning-studio' || hash.startsWith('#course-player')) {
+      setIsCourseModalOpen(true);
+    }
+  }, []);
 
   // Initialize data and allow components to mount before dismissing skeleton
   useEffect(() => {
@@ -77,6 +98,7 @@ export default function App() {
         activeSection={activeSection}
         onSectionChange={setActiveSection}
         onOpenSourceModal={() => setIsPortfolioSourceOpen(true)}
+        onOpenCourseModal={() => handleOpenCourseModal()}
       />
 
       {/* Main Content Areas */}
@@ -86,6 +108,7 @@ export default function App() {
           personal={portfolio.personal}
           social={portfolio.social}
           onOpenResume={() => setIsResumeOpen(true)}
+          onOpenCourseModal={() => handleOpenCourseModal()}
         />
 
         {/* 2. About Section */}
@@ -108,13 +131,19 @@ export default function App() {
           onSelectProject={setActiveProject}
         />
 
-        {/* 6. Experience Section */}
+        {/* 6. Course & Video Lessons Section */}
+        <Courses onOpenCourseModal={handleOpenCourseModal} />
+
+        {/* 7. Experience Section */}
         <Experience experience={portfolio.experience} />
 
-        {/* 7. Education Section */}
-        <Education education={portfolio.education} />
+        {/* 8. Education Section */}
+        <Education
+          education={portfolio.education}
+          onOpenCourseModal={() => handleOpenCourseModal()}
+        />
 
-        {/* 8. Contact Section */}
+        {/* 9. Contact Section */}
         <Contact personal={portfolio.personal} social={portfolio.social} />
       </main>
 
@@ -141,6 +170,14 @@ export default function App() {
       <ResumeModal
         isOpen={isResumeOpen}
         onClose={() => setIsResumeOpen(false)}
+      />
+
+      {/* Online Course & Video Lessons Studio Modal */}
+      <CourseLearningModal
+        isOpen={isCourseModalOpen}
+        onClose={() => setIsCourseModalOpen(false)}
+        initialCourseId={selectedCourseId}
+        initialLessonId={selectedLessonId}
       />
     </div>
     </>
