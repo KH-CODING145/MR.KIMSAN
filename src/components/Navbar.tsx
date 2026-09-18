@@ -21,6 +21,7 @@ const navItems = [
   { label: 'Skills', href: '#skills' },
   { label: 'Services', href: '#services' },
   { label: 'Projects', href: '#projects' },
+  { label: 'Feed', href: '#social-wall' },
   { label: 'Learning', href: '#learning', isLearning: true },
   { label: 'Experience', href: '#experience' },
   { label: 'Education', href: '#education' },
