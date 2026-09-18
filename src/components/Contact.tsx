@@ -15,6 +15,7 @@ import {
   CreditCard,
   X,
 } from 'lucide-react';
+import SimulatedEmailConfirmation, { SubmittedInquiryData } from './SimulatedEmailConfirmation';
 
 interface ContactProps {
   personal: {
@@ -55,6 +56,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [submittedData, setSubmittedData] = useState<SubmittedInquiryData | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -121,6 +123,22 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
     setStatus('loading');
     setErrorMessage('');
 
+    const snapshot: SubmittedInquiryData = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      subject: formData.subject.trim(),
+      message: formData.message.trim(),
+      selectedPlan: selectedPlan || null,
+      referenceId: `KS-${Math.floor(100000 + Math.random() * 900000)}`,
+      timestamp: new Date().toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    };
+
     try {
       // Netlify Forms compatible submission
       const response = await fetch('/', {
@@ -135,6 +153,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
       // In local dev/sandbox preview without Netlify daemon, fetch might return 200 or 404
       // We accept both or catch gracefully
       if (response.ok || response.status === 404) {
+        setSubmittedData(snapshot);
         setStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
@@ -142,6 +161,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
       }
     } catch {
       // Fallback: Still mark success for client demonstration in local preview
+      setSubmittedData(snapshot);
       setStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
     }
@@ -268,7 +288,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
             </div>
           </motion.div>
 
-          {/* Right Column: Contact Form with Netlify configuration */}
+          {/* Right Column: Contact Form or Simulated Email Confirmation */}
           <motion.div
             className="lg:col-span-7"
             initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
@@ -276,27 +296,19 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl">
-              {status === 'success' ? (
-                <div className="text-center py-12 space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-md">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                    Message Sent Successfully!
-                  </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto">
-                    Thank you for reaching out. I have received your message and will get back to you shortly.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setStatus('idle')}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 transition-all shadow-sm mt-4"
-                  >
-                    <span>Send Another Message</span>
-                  </button>
-                </div>
-              ) : (
+            {status === 'success' && submittedData ? (
+              <SimulatedEmailConfirmation
+                data={submittedData}
+                developerName={personal.name}
+                developerEmail={personal.email}
+                telegramUrl={social.telegram}
+                onReset={() => {
+                  setStatus('idle');
+                  setSubmittedData(null);
+                }}
+              />
+            ) : (
+              <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl">
                 <form
                   name="contact"
                   method="POST"
@@ -486,8 +498,8 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
                     )}
                   </button>
                 </form>
-              )}
-            </div>
+              </div>
+            )}
           </motion.div>
         </div>
 
