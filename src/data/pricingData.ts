@@ -31,10 +31,10 @@ export const PRICING_PLANS: PricingPlan[] = [
     name: 'Starter MVP',
     tagline: 'High-Converting Landing & MVP',
     description: 'Perfect for startups, founders, and creators wanting rapid market validation and a polished web presence.',
-    fixedPrice: 799,
-    retainerPrice: 1200,
+    fixedPrice: 250,
+    retainerPrice: 380,
     currency: '$',
-    turnaround: '5 – 7 business days',
+    turnaround: '3 – 5 business days',
     highlightColor: 'from-blue-500 to-indigo-600',
     deliverables: [
       'Custom modern web app (React 19, TypeScript, Tailwind CSS)',
@@ -44,7 +44,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Full Git repository handoff with clean documentation',
       '14 days post-launch bug fixing & maintenance warranty',
     ],
-    ctaText: 'Choose Starter Plan',
+    ctaText: 'Choose Starter ($250)',
   },
   {
     id: 'pro-fullstack',
@@ -53,10 +53,10 @@ export const PRICING_PLANS: PricingPlan[] = [
     description: 'Comprehensive web application with custom backend APIs, database management, and interactive admin controls.',
     badge: 'Most Popular',
     popular: true,
-    fixedPrice: 1899,
-    retainerPrice: 2800,
+    fixedPrice: 560,
+    retainerPrice: 790,
     currency: '$',
-    turnaround: '2 – 3 weeks',
+    turnaround: '1 – 2 weeks',
     highlightColor: 'from-indigo-600 to-purple-600',
     deliverables: [
       'Everything in Starter MVP',
@@ -68,7 +68,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Docker container setup & automated Cloud Run / VPS deployment',
       '30 days dedicated support & maintenance warranty',
     ],
-    ctaText: 'Choose Full-Stack Plan',
+    ctaText: 'Choose Full-Stack ($560)',
   },
   {
     id: 'ai-enterprise',
@@ -76,10 +76,10 @@ export const PRICING_PLANS: PricingPlan[] = [
     tagline: 'Autonomous AI Agents & Scale',
     description: 'Advanced AI system integration, intelligent agent loops, vector search, and high-concurrency cloud architecture.',
     badge: 'Advanced AI',
-    fixedPrice: 3499,
-    retainerPrice: 4500,
+    fixedPrice: 890,
+    retainerPrice: 1250,
     currency: '$',
-    turnaround: '3 – 4 weeks',
+    turnaround: '2 – 3 weeks',
     highlightColor: 'from-purple-600 to-pink-600',
     deliverables: [
       'Everything in Full-Stack SaaS',
@@ -90,7 +90,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Automated CI/CD testing pipelines with GitHub Actions',
       'Enterprise architectural review, security hardening & 60-day SLA support',
     ],
-    ctaText: 'Choose Enterprise Plan',
+    ctaText: 'Choose Enterprise ($890)',
   },
 ];
 
