@@ -11,11 +11,10 @@ import {
   ArrowRight,
   Video,
   Layers,
-  Search,
-  ExternalLink,
-  Smartphone
+  Search
 } from 'lucide-react';
 import { Course, sampleCourses } from '../data/coursesData';
+import FadeInUpSection from './FadeInUpSection';
 
 interface CoursesProps {
   onOpenCourseModal: (courseId?: string, lessonId?: string) => void;
@@ -26,7 +25,7 @@ export default function Courses({ onOpenCourseModal }: CoursesProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [courseSearch, setCourseSearch] = useState<string>('');
 
-  const categories = ['All', 'AI', 'React', 'Laravel', 'Node.js', 'Python'];
+  const categories = ['All', 'React', 'Laravel', 'Node.js', 'Python'];
 
   const filteredCourses = useMemo(() => {
     return sampleCourses.filter((course) => {
@@ -53,7 +52,7 @@ export default function Courses({ onOpenCourseModal }: CoursesProps) {
       className="py-20 lg:py-28 relative bg-slate-50 dark:bg-slate-950 border-t border-slate-200/60 dark:border-slate-800/60"
       aria-label="Course and Online Video Learning"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection>
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-mono font-semibold mb-3">
@@ -154,15 +153,9 @@ export default function Courses({ onOpenCourseModal }: CoursesProps) {
 
                   {/* Top Badges */}
                   <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 dark:bg-slate-900/90 text-indigo-600 dark:text-indigo-400 backdrop-blur-md shadow-xs">
-                        {course.category}
-                      </span>
-                      <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-950/80 text-cyan-300 border border-cyan-500/30 backdrop-blur-md">
-                        <Smartphone className="w-2.5 h-2.5 rotate-90" />
-                        <span>ផ្ដេកទូរស័ព្ទ</span>
-                      </span>
-                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 dark:bg-slate-900/90 text-indigo-600 dark:text-indigo-400 backdrop-blur-md shadow-xs">
+                      {course.category}
+                    </span>
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-black/60 text-white backdrop-blur-md">
                       <Clock className="w-3 h-3" />
                       {course.totalDuration}
@@ -221,28 +214,16 @@ export default function Courses({ onOpenCourseModal }: CoursesProps) {
               </div>
 
               {/* Card Footer Button */}
-              <div className="px-6 pb-6 pt-2 flex flex-col sm:flex-row items-center gap-2">
+              <div className="px-6 pb-6 pt-2">
                 <button
                   type="button"
                   onClick={() => onOpenCourseModal(course.id)}
-                  className="flex-1 w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/35 transition-all duration-200 cursor-pointer group/btn"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 hover:shadow-indigo-600/35 transition-all duration-200 cursor-pointer group/btn"
                 >
                   <Play className="w-4 h-4 fill-white" />
                   <span>Start Learning / មើលវីដេអូមេរៀន</span>
                   <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                 </button>
-                {course.driveUrl && (
-                  <a
-                    href={course.driveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-3 px-3.5 rounded-xl text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition-colors whitespace-nowrap shadow-xs"
-                    title="Open Google Drive materials"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>Drive Link</span>
-                  </a>
-                )}
               </div>
             </motion.div>
           ))}
@@ -272,7 +253,7 @@ export default function Courses({ onOpenCourseModal }: CoursesProps) {
             <span>Launch Video Player / ចូលរៀនឥឡូវនេះ</span>
           </button>
         </div>
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }

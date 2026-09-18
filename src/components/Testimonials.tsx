@@ -25,6 +25,7 @@ import {
   TESTIMONIALS_METRICS,
   TestimonialItem,
 } from '../data/testimonialsData';
+import FadeInUpSection from './FadeInUpSection';
 
 interface TestimonialsProps {
   onContactClick?: (initialMessage?: string) => void;
@@ -171,7 +172,7 @@ export default function Testimonials({ onContactClick }: TestimonialsProps) {
       className="py-20 lg:py-28 relative bg-slate-50/70 dark:bg-slate-950/40 overflow-hidden"
       aria-label="Client Testimonials and Endorsements"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection>
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-10 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-mono font-medium mb-3">
@@ -670,7 +671,7 @@ export default function Testimonials({ onContactClick }: TestimonialsProps) {
             ))}
           </div>
         )}
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }

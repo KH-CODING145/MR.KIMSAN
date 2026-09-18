@@ -35,8 +35,13 @@ export default function Footer({ personal, social, brandName = 'PRO DIGITAL' }: 
       const el = document.getElementById(targetId);
       if (el) {
         const headerOffset = 76;
-        const elementPosition = el.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        let targetTop = 0;
+        let curr: HTMLElement | null = el;
+        while (curr) {
+          targetTop += curr.offsetTop;
+          curr = curr.offsetParent as HTMLElement | null;
+        }
+        const offsetPosition = Math.max(0, targetTop - headerOffset);
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth',

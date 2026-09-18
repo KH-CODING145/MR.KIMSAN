@@ -5,7 +5,6 @@ export interface Lesson {
   duration: string;
   videoUrl: string; // YouTube embed or video URL
   youtubeId: string;
-  driveUrl?: string;
   summary: string;
   keyPoints: string[];
   codeSnippet?: string;
@@ -18,7 +17,7 @@ export interface Course {
   title: string;
   titleKh: string;
   slug: string;
-  category: 'React' | 'Laravel' | 'Node.js' | 'Python' | 'Full Stack' | 'AI';
+  category: 'React' | 'Laravel' | 'Node.js' | 'Python' | 'Full Stack';
   level: 'Beginner' | 'Intermediate' | 'Advanced';
   totalDuration: string;
   lessonsCount: number;
@@ -26,7 +25,6 @@ export interface Course {
   rating: number;
   studentsEnrolled: number;
   thumbnail: string;
-  driveUrl?: string;
   description: string;
   descriptionKh: string;
   tags: string[];
@@ -36,112 +34,111 @@ export interface Course {
 export const sampleCourses: Course[] = [
   {
     id: 'course-react-fullstack',
-    title: 'AI SOFTWARE ENGINEER',
-    titleKh: 'វគ្គបណ្តុះបណ្តាល AI Software Engineer កម្រិតខ្ពស់',
-    slug: 'ai-software-engineer',
-    category: 'AI',
-    level: 'Advanced',
-    totalDuration: '8h 30m',
+    title: 'Modern React 19 & Next.js Full-Stack Masterclass',
+    titleKh: 'វគ្គសិក្សា React 19 & Next.js កម្រិតខ្ពស់',
+    slug: 'modern-react-nextjs',
+    category: 'React',
+    level: 'Intermediate',
+    totalDuration: '6h 45m',
     lessonsCount: 6,
     instructor: 'Mr. KIM SAN (PRO DIGITAL)',
-    rating: 5.0,
-    studentsEnrolled: 1680,
-    thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop&q=80',
-    driveUrl: 'https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk',
+    rating: 4.9,
+    studentsEnrolled: 1420,
+    thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop&q=80',
     description:
-      'Master modern AI Software Engineering principles: LLM orchestration, Agentic frameworks, RAG architectures, multi-modal reasoning, prompt engineering, and deploying production full-stack AI applications.',
+      'Master modern React 19 features including Server Actions, useOptimistic, Suspense architectures, Tailwind CSS design systems, and deploying production full-stack web applications.',
     descriptionKh:
-      'សិក្សាពីការបង្កើតកម្មវិធី AI Software Engineering ទំនើបដោយប្រើ LLM Models, Agentic Workflows, RAG Architectures, និងការបញ្ចេញទៅកាន់ Cloud Hosting។',
-    tags: ['AI Software Engineer', 'Gemini AI', 'Python', 'TypeScript', 'Next.js'],
+      'សិក្សាពីការបង្កើតកម្មវិធី Full-Stack Web ទំនើបដោយប្រើ React 19, Server Components, Hooks, Tailwind CSS និងការបញ្ចេញទៅកាន់ Cloud Hosting។',
+    tags: ['React 19', 'TypeScript', 'Tailwind CSS', 'Vite', 'Next.js'],
     lessons: [
       {
         id: 'r19-l1',
-        title: 'AI Software Engineering Architecture & Setup',
-        titleKh: 'ស្ថាបត្យកម្មវិស្វករផ្នែកទន់ AI និងការដំឡើងបរិស្ថានការងារ',
-        duration: '28:40',
-        videoUrl: 'https://www.youtube.com/embed/5q87K1WaoFI',
-        youtubeId: '5q87K1WaoFI',
-        driveUrl: 'https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk',
+        title: 'React 19 Core Fundamentals & Modern Hooks',
+        titleKh: 'មូលដ្ឋានគ្រឹះ React 19 និង Hooks ជំនាន់ថ្មី',
+        duration: '18:40',
+        videoUrl: 'https://www.youtube.com/embed/bMknfKXIFA8',
+        youtubeId: 'bMknfKXIFA8',
         summary:
-          'Deep dive into AI Software Engineering paradigms, agentic architecture, LLM inference pipelines, and production workspace setup.',
+          'Deep dive into React 19 new architecture, compiler updates, and state management paradigms for blazing-fast frontends.',
         keyPoints: [
-          'Overview of AI Software Engineering stack and development lifecycle',
-          'Accessing Google Drive course resources, templates, and video walkthroughs',
-          'Orchestrating agent workflows and state persistence',
-          'Production project setup with Gemini API, TypeScript, and modern frontends',
+          'Overview of React 19 Actions and state primitives',
+          'Eliminating unnecessary re-renders with compiler optimizations',
+          'Comparison of useEffect vs Server Components data fetching',
+          'Production project setup with TypeScript and Tailwind CSS',
         ],
-        codeSnippet: `// AI Software Engineering - GenAI Agentic Integration
-import { GoogleGenAI } from '@google/genai';
+        codeSnippet: `// React 19 Modern Action Example
+import { useActionState, useOptimistic } from 'react';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+export function CommentForm({ addCommentAction, initialComments }) {
+  const [optimisticComments, setOptimistic] = useOptimistic(
+    initialComments,
+    (state, newText) => [...state, { id: 'temp', text: newText, pending: true }]
+  );
 
-export async function runAIEngineerAgent(prompt: string) {
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      temperature: 0.2,
-      systemInstruction: 'You are an autonomous AI Software Engineer assistant.',
-    },
-  });
-  return response.text;
+  const [state, formAction, isPending] = useActionState(async (prev, formData) => {
+    const text = formData.get('comment');
+    setOptimistic(text);
+    return await addCommentAction(text);
+  }, null);
+
+  return (
+    <form action={formAction} className="space-y-3">
+      <input name="comment" placeholder="Write a comment..." className="p-2 border rounded" />
+      <button disabled={isPending} className="bg-indigo-600 text-white px-4 py-2 rounded">
+        {isPending ? 'Posting...' : 'Post Comment'}
+      </button>
+    </form>
+  );
 }`,
         codeLanguage: 'tsx',
         resources: [
-          {
-            name: 'Google Drive Course Materials & Lecture',
-            url: 'https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk',
-          },
-          { name: 'Google GenAI SDK Documentation', url: 'https://ai.google.dev' },
+          { name: 'Official React 19 Documentation', url: 'https://react.dev' },
+          { name: 'Source Code GitHub Repository', url: 'https://github.com' },
         ],
       },
       {
         id: 'r19-l2',
-        title: 'Large Language Models (LLM) Architecture & Reasoning',
-        titleKh: 'ស្ថាបត្យកម្មម៉ូដែល LLMs & ដំណើរការគិត Reasoning',
-        duration: '42:15',
-        videoUrl: 'https://www.youtube.com/embed/2eWuYf-aZE4',
-        youtubeId: '2eWuYf-aZE4',
-        driveUrl: 'https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk',
+        title: 'Building Interactive UI with Motion & Tailwind CSS',
+        titleKh: 'ការបង្កើត UI ដ៏ស្រស់ស្អាតជាមួយ Motion & Tailwind CSS',
+        duration: '22:15',
+        videoUrl: 'https://www.youtube.com/embed/zoxz60-sQ-w',
+        youtubeId: 'zoxz60-sQ-w',
         summary:
-          'Comprehensive exploration of tokenization, transformer architectures, pre-training, fine-tuning, and reasoning models.',
+          'Construct accessible, mobile-first interfaces with slick layout transitions, responsive grids, and dark/light color schemes.',
         keyPoints: [
-          'Neural network weights, tokenizers, and context windows',
-          'Attention mechanisms and transformer layers',
-          'Reinforcement Learning from Human Feedback (RLHF)',
-          'Prompt decomposition and Chain-of-Thought reasoning',
+          'Design systems layout math and spacing ratios',
+          'Creating performant spring animations with motion/react',
+          'Dynamic theme switches with Tailwind dark mode classes',
+          'Accessible modal dialogs and ARIA keyboard trap patterns',
         ],
-        codeSnippet: `// LLM Reasoning & Chain-of-Thought prompt
-const response = await ai.models.generateContent({
-  model: 'gemini-2.5-flash',
-  contents: 'Analyze the performance trade-offs of Vector Embeddings vs Full-Text Search.',
-  config: {
-    thinkingConfig: { thinkingBudget: 1024 },
-  },
-});`,
-        codeLanguage: 'typescript',
+        codeSnippet: `<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  whileHover={{ y: -6, scale: 1.02 }}
+  transition={{ duration: 0.3 }}
+  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md"
+>
+  <h3 className="text-xl font-bold">Interactive Card</h3>
+</motion.div>`,
+        codeLanguage: 'tsx',
         resources: [
-          {
-            name: 'Google Drive Course Materials & Lecture',
-            url: 'https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk',
-          },
-          { name: 'LLM Visualization & Research Papers', url: 'https://arxiv.org' },
+          { name: 'Tailwind CSS Official Docs', url: 'https://tailwindcss.com' },
+          { name: 'Motion (formerly Framer Motion)', url: 'https://motion.dev' },
         ],
       },
       {
         id: 'r19-l3',
-        title: 'Deep Learning & Neural Networks for AI Engineers',
-        titleKh: 'Deep Learning & បណ្តាញសរសៃប្រសាទសិប្បនិម្មិត',
-        duration: '35:20',
-        videoUrl: 'https://www.youtube.com/embed/aircAruvnKk',
-        youtubeId: 'aircAruvnKk',
-        driveUrl: 'https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk',
+        title: 'Full-Stack Data Fetching & State Synchronization',
+        titleKh: 'ការទាញយកទិន្នន័យពី API និងការគ្រប់គ្រង State',
+        duration: '25:10',
+        videoUrl: 'https://www.youtube.com/embed/LDB4uaJ87e0',
+        youtubeId: 'LDB4uaJ87e0',
         summary:
-          'Understand fundamental deep learning models, forward and backward propagation, loss functions, and PyTorch tensors.',
+          'Connect React client components with REST APIs, caching layers, error boundaries, and optimistic UI updates.',
         keyPoints: [
-          'Tensors, gradient descent, and backpropagation',
-          'Activation functions (ReLU, GELU, Softmax)',
-          'Training optimization with AdamW and learning rate schedulers',
+          'SWR / React Query data synchronization strategies',
+          'Resilient error boundary handling and retry mechanics',
+          'Handling authentication tokens and protected routes safely',
         ],
       },
       {

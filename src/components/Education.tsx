@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
-import { GraduationCap, Award, Calendar, BookOpen, Video, Play, ArrowRight, ExternalLink } from 'lucide-react';
+import { GraduationCap, Award, Calendar, BookOpen, Video, Play, ArrowRight } from 'lucide-react';
+import FadeInUpSection from './FadeInUpSection';
 
 interface EducationItem {
   institution: string;
@@ -8,7 +9,6 @@ interface EducationItem {
   period: string;
   description: string;
   achievements?: string[];
-  certificateUrl?: string;
 }
 
 interface EducationProps {
@@ -21,7 +21,7 @@ export default function Education({ education, onOpenCourseModal }: EducationPro
 
   return (
     <section id="education" className="py-20 lg:py-28 relative bg-slate-100/50 dark:bg-slate-900/30" aria-label="Education and Certifications">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection>
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-16">
           <span className="text-xs uppercase font-mono tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">
@@ -84,19 +84,6 @@ export default function Education({ education, onOpenCourseModal }: EducationPro
                       <span>{ach}</span>
                     </div>
                   ))}
-                  {item.certificateUrl && (
-                    <div className="pt-2">
-                      <a
-                        href={item.certificateUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/70 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition-colors shadow-xs"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>View Verified Credential (Google Drive)</span>
-                      </a>
-                    </div>
-                  )}
                 </div>
               )}
             </motion.div>
@@ -121,7 +108,7 @@ export default function Education({ education, onOpenCourseModal }: EducationPro
                   Continuous Learning &amp; Video Hub (វីដេអូមេរៀនអនឡាញ)
                 </h4>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">
-                  Explore practical developer masterclasses in AI Software Engineering, Laravel 11, Node.js, and Python automation.
+                  Explore practical developer masterclasses in React 19, Laravel 11, Node.js, and Python AI automation.
                 </p>
               </div>
             </div>
@@ -135,7 +122,7 @@ export default function Education({ education, onOpenCourseModal }: EducationPro
             </button>
           </motion.div>
         )}
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }

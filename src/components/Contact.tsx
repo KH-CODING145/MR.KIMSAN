@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import SimulatedEmailConfirmation, { SubmittedInquiryData } from './SimulatedEmailConfirmation';
+import FadeInUpSection from './FadeInUpSection';
 
 interface ContactProps {
   personal: {
@@ -169,7 +170,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
 
   return (
     <section id="contact" className="py-20 lg:py-28 relative" aria-label="Contact Section">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection>
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-16">
           <span className="text-xs uppercase font-mono tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">
@@ -563,7 +564,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
             />
           </div>
         </motion.div>
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }

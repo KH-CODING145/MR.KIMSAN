@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { Briefcase, Calendar, MapPin, CheckCircle } from 'lucide-react';
+import FadeInUpSection from './FadeInUpSection';
 
 interface ExperienceItem {
   company: string;
@@ -19,7 +20,7 @@ export default function Experience({ experience }: ExperienceProps) {
 
   return (
     <section id="experience" className="py-20 lg:py-28 relative" aria-label="Work Experience">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection>
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-16">
           <span className="text-xs uppercase font-mono tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">
@@ -113,7 +114,7 @@ export default function Experience({ experience }: ExperienceProps) {
             ))}
           </div>
         </div>
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }

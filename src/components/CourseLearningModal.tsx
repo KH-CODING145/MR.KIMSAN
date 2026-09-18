@@ -21,12 +21,7 @@ import {
   MessageSquare,
   BookmarkCheck,
   Award,
-  GraduationCap,
-  Layers,
-  Smartphone,
-  Wifi,
-  Battery,
-  RotateCw
+  GraduationCap
 } from 'lucide-react';
 import { Course, Lesson, sampleCourses } from '../data/coursesData';
 
@@ -55,8 +50,6 @@ export default function CourseLearningModal({
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [userStudyNotes, setUserStudyNotes] = useState<string>('');
   const [savedNotesMessage, setSavedNotesMessage] = useState<string>('');
-  const [videoSourceMode, setVideoSourceMode] = useState<'video' | 'drive'>('video');
-  const [isPhoneLandscapeMode, setIsPhoneLandscapeMode] = useState<boolean>(true);
 
   // Track completed lessons
   const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(() => {
@@ -190,94 +183,6 @@ export default function CourseLearningModal({
     (completedInCourseCount / (activeCourse.lessons.length || 1)) * 100
   );
 
-  // Core video content element
-  const renderVideoBody = () => {
-    if (videoSourceMode === 'drive' && (activeLesson?.driveUrl || activeCourse?.driveUrl)) {
-      return (
-        <div className="relative w-full h-full flex flex-col">
-          <iframe
-            src={(activeLesson?.driveUrl || activeCourse?.driveUrl || '').replace(/\/view(\?usp=[^&]*)?/, '/preview')}
-            title={`${activeLesson?.title} - Google Drive`}
-            allow="autoplay; encrypted-media; fullscreen"
-            allowFullScreen
-            className="w-full h-full border-0"
-          />
-          <div className="absolute top-3 left-3 right-3 flex items-center justify-between p-2 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-xs text-white">
-            <span className="truncate pr-2">Google Drive File Preview</span>
-            <a
-              href={activeLesson?.driveUrl || activeCourse?.driveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors shadow-xs"
-            >
-              <ExternalLink className="w-3 h-3" />
-              <span>Open in Google Drive</span>
-            </a>
-          </div>
-        </div>
-      );
-    }
-
-    if (activeLesson?.youtubeId) {
-      return (
-        <div className="relative w-full h-full">
-          <iframe
-            src={`https://www.youtube-nocookie.com/embed/${activeLesson.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`}
-            title={activeLesson.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-            allowFullScreen
-            className="w-full h-full border-0"
-          />
-          {(activeLesson?.driveUrl || activeCourse?.driveUrl) && (
-            <a
-              href={activeLesson?.driveUrl || activeCourse?.driveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-950/85 hover:bg-slate-900 text-white shadow-md border border-slate-700/60 backdrop-blur-md transition-all cursor-pointer opacity-80 hover:opacity-100"
-              title="Open Drive materials"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Google Drive File</span>
-            </a>
-          )}
-        </div>
-      );
-    }
-
-    if (activeLesson?.videoUrl && (activeLesson.videoUrl.endsWith('.mp4') || activeLesson.videoUrl.endsWith('.webm'))) {
-      return (
-        <video
-          src={activeLesson.videoUrl}
-          controls
-          autoPlay
-          playsInline
-          className="w-full h-full object-contain"
-        />
-      );
-    }
-
-    if (activeLesson?.videoUrl) {
-      return (
-        <div className="relative w-full h-full">
-          <iframe
-            src={activeLesson.videoUrl}
-            title={activeLesson.title}
-            allow="autoplay; encrypted-media; fullscreen"
-            allowFullScreen
-            className="w-full h-full border-0"
-          />
-        </div>
-      );
-    }
-
-    return (
-      <div className="text-center p-8 text-white">
-        <Play className="w-16 h-16 mx-auto mb-3 text-indigo-400 opacity-80" />
-        <p className="text-sm font-semibold">Video stream loading...</p>
-      </div>
-    );
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -350,40 +255,6 @@ export default function CourseLearningModal({
                 <span>{courseProgressPercentage}% Complete</span>
               </div>
 
-              {/* Google Drive Link Button if available */}
-              {activeCourse.driveUrl && (
-                <a
-                  href={activeCourse.driveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold transition-colors"
-                  title="Open Google Drive Master File"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Google Drive</span>
-                </a>
-              )}
-
-              {/* Landscape Phone Mode Toggle */}
-              <button
-                type="button"
-                onClick={() => setIsPhoneLandscapeMode((prev) => !prev)}
-                title={
-                  isPhoneLandscapeMode
-                    ? 'ប្តូរទៅទម្រង់ធម្មតា / Switch to Standard'
-                    : 'បង្ហាញជាលក្ខណៈផ្ដេកទូរស័ព្ទ / Switch to Landscape Phone'
-                }
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                  isPhoneLandscapeMode
-                    ? 'bg-indigo-600 text-white shadow-xs shadow-indigo-600/30 ring-1 ring-indigo-400/40'
-                    : 'bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300/70 dark:hover:bg-slate-700'
-                }`}
-                aria-label="Toggle Landscape Phone Mode"
-              >
-                <Smartphone className="w-3.5 h-3.5 rotate-90" />
-                <span className="hidden sm:inline">ផ្ដេកទូរស័ព្ទ</span>
-              </button>
-
               {/* Cinema Mode Toggle */}
               <button
                 type="button"
@@ -411,137 +282,23 @@ export default function CourseLearningModal({
           <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
             {/* LEFT / CENTER: Video Player & Study Content */}
             <div className="flex-1 flex flex-col overflow-y-auto border-r border-slate-200 dark:border-slate-800">
-              {/* Optional Source Switcher Bar if Google Drive link exists */}
-              {(activeLesson?.driveUrl || activeCourse?.driveUrl) && (
-                <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-mono text-[11px] hidden sm:inline">Source:</span>
-                    <button
-                      type="button"
-                      onClick={() => setVideoSourceMode('video')}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                        videoSourceMode === 'video'
-                          ? 'bg-indigo-600 text-white shadow-xs'
-                          : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700'
-                      }`}
-                    >
-                      <Play className="w-3 h-3 fill-current" />
-                      <span>Video Masterclass (HD)</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setVideoSourceMode('drive')}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                        videoSourceMode === 'drive'
-                          ? 'bg-indigo-600 text-white shadow-xs'
-                          : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700'
-                      }`}
-                    >
-                      <Layers className="w-3 h-3" />
-                      <span>Google Drive File</span>
-                    </button>
+              {/* 16:9 Video Player Container */}
+              <div className="relative w-full bg-black aspect-video shrink-0 flex items-center justify-center overflow-hidden group">
+                {activeLesson?.youtubeId ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${activeLesson.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                    title={activeLesson.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                ) : (
+                  <div className="text-center p-8 text-white">
+                    <Play className="w-16 h-16 mx-auto mb-3 text-indigo-400 opacity-80" />
+                    <p className="text-sm font-semibold">Video stream loading...</p>
                   </div>
-
-                  <a
-                    href={activeLesson?.driveUrl || activeCourse?.driveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-400 hover:text-cyan-300 hover:underline"
-                    title="Open Google Drive Link directly"
-                  >
-                    <span>Open Drive File</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              )}
-
-              {/* Video Player Container: Horizontal Phone Mode or Standard Mode */}
-              {isPhoneLandscapeMode ? (
-                <div className="w-full bg-slate-950 p-2 sm:p-5 flex flex-col items-center justify-center border-b border-slate-200 dark:border-slate-800 transition-all">
-                  {/* Phone Mode Info Bar */}
-                  <div className="w-full max-w-4xl flex items-center justify-between mb-2.5 px-1 text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 text-[11px] font-semibold">
-                        <Smartphone className="w-3 h-3 rotate-90 text-indigo-400" />
-                        <span>ទូរស័ព្ទផ្ដេក &bull; Mobile Landscape</span>
-                      </span>
-                      <span className="text-slate-400 text-[11px] hidden sm:inline">
-                        ទម្រង់ទូរស័ព្ទផ្ដេកសម្រាប់ទស្សនាវីដេអូមេរៀន
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setIsPhoneLandscapeMode(false)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-[11px] transition-colors cursor-pointer"
-                        title="ប្តូរទៅទម្រង់ធម្មតា / Standard Wide"
-                      >
-                        <Maximize2 className="w-3 h-3" />
-                        <span>ទម្រង់ធម្មតា</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Realistic Landscape Phone Chassis */}
-                  <div
-                    id="lesson-video-player-chassis"
-                    className="relative w-full max-w-4xl bg-slate-900 border-[6px] sm:border-[8px] md:border-[10px] border-slate-700/80 dark:border-slate-800 rounded-[2rem] sm:rounded-[2.8rem] shadow-2xl shadow-indigo-950/40 p-1.5 sm:p-2.5 ring-1 ring-white/10 select-none"
-                  >
-                    {/* Physical Hardware Buttons on Chassis */}
-                    {/* Top Edge (Power / Screen Lock in landscape) */}
-                    <div className="absolute -top-2 left-28 w-12 h-1 bg-slate-600 rounded-t-sm pointer-events-none hidden sm:block" />
-                    {/* Bottom Edge (Volume Rockers in landscape) */}
-                    <div className="absolute -bottom-2 left-24 w-14 h-1 bg-slate-600 rounded-b-sm pointer-events-none hidden sm:block" />
-                    <div className="absolute -bottom-2 left-44 w-14 h-1 bg-slate-600 rounded-b-sm pointer-events-none hidden sm:block" />
-
-                    {/* Landscape Left Bezel: Dynamic Island & Front Camera */}
-                    <div className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-30 pointer-events-none flex flex-col items-center justify-center">
-                      <div className="w-3.5 h-12 sm:w-4 sm:h-14 bg-black rounded-full border border-slate-800 flex flex-col items-center justify-center gap-1.5 shadow-inner">
-                        <div className="w-2 h-2 rounded-full bg-slate-900 border border-indigo-950" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-950/60" />
-                      </div>
-                    </div>
-
-                    {/* Landscape Right Bezel: Ear Speaker / Mic Grill */}
-                    <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-30 pointer-events-none flex flex-col items-center">
-                      <div className="w-1 sm:w-1.5 h-16 sm:h-20 bg-slate-800/90 rounded-full border border-slate-700/50" />
-                    </div>
-
-                    {/* Phone Screen Area */}
-                    <div className="relative w-full aspect-video bg-black rounded-[1.5rem] sm:rounded-[2.2rem] overflow-hidden pl-7 pr-7 sm:pl-9 sm:pr-9 flex items-center justify-center group">
-                      {/* Phone Landscape Status Bar */}
-                      <div className="absolute top-2 left-8 right-8 z-20 flex items-center justify-between text-[10px] font-mono text-white/60 pointer-events-none select-none px-2">
-                        <span className="font-semibold tracking-wider">9:41</span>
-                        <div className="flex items-center gap-1.5">
-                          <Wifi className="w-3 h-3 text-white/70" />
-                          <span className="text-[9px]">5G</span>
-                          <Battery className="w-3.5 h-3.5 text-emerald-400" />
-                        </div>
-                      </div>
-
-                      {/* Glossy Screen Glare */}
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-white/[0.05] z-10" />
-
-                      {/* Video Stream Content */}
-                      {renderVideoBody()}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative w-full bg-black aspect-video shrink-0 flex items-center justify-center overflow-hidden group">
-                  {/* Toggle button to switch back to landscape phone */}
-                  <button
-                    type="button"
-                    onClick={() => setIsPhoneLandscapeMode(true)}
-                    className="absolute top-3 left-3 z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950/80 hover:bg-slate-900 text-white text-xs font-semibold backdrop-blur-md border border-slate-700/60 transition-all cursor-pointer shadow-md opacity-85 hover:opacity-100"
-                  >
-                    <Smartphone className="w-3.5 h-3.5 rotate-90 text-indigo-400" />
-                    <span>បង្ហាញជាលក្ខណៈផ្ដេកទូរស័ព្ទ</span>
-                  </button>
-                  {renderVideoBody()}
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Lesson Control & Progress Bar */}
               <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
@@ -777,31 +534,6 @@ export default function CourseLearningModal({
                     <h4 className="text-sm font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
                       External Documentation &amp; Source Repositories
                     </h4>
-
-                    {activeCourse.driveUrl && (
-                      <a
-                        href={activeCourse.driveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-500 hover:bg-indigo-100/70 dark:hover:bg-indigo-900/60 transition-all text-sm group"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                            <Download className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <span className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 block">
-                              Google Drive Course Files &amp; Lecture Materials
-                            </span>
-                            <span className="text-xs text-slate-500 dark:text-slate-400">
-                              {activeCourse.title} &bull; Open Drive File
-                            </span>
-                          </div>
-                        </div>
-                        <ExternalLink className="w-4 h-4 text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
-                      </a>
-                    )}
-
                     {activeLesson?.resources && activeLesson.resources.length > 0 ? (
                       <div className="space-y-2">
                         {activeLesson.resources.map((res, i) => (

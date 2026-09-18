@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   LucideIcon,
 } from 'lucide-react';
+import FadeInUpSection from './FadeInUpSection';
 
 interface ServiceItem {
   id: string;
@@ -38,7 +39,7 @@ export default function Services({ services }: ServicesProps) {
 
   return (
     <section id="services" className="py-20 lg:py-28 relative" aria-label="Services Offered">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection>
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-16">
           <span className="text-xs uppercase font-mono tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">
@@ -140,7 +141,7 @@ export default function Services({ services }: ServicesProps) {
             );
           })}
         </div>
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }

@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, Github, Linkedin, Facebook, Send, Youtube, Terminal, Sparkles, CheckCircle, GraduationCap, Languages, Video, Play } from 'lucide-react';
 import TypewriterTitle from './TypewriterTitle';
+import FadeInUpSection from './FadeInUpSection';
 
 interface HeroProps {
   personal: {
@@ -62,7 +63,7 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <FadeInUpSection className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full" yOffset={24}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Text & Call to Action */}
           <motion.div

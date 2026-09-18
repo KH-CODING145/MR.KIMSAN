@@ -515,16 +515,15 @@ export const portfolio = {
       ],
     },
     {
-      institution: "AI SOFTWARE ENGINEER",
-      degree: "Professional Certificate & Specialization",
-      field: "Artificial Intelligence & Advanced Software Engineering",
-      period: "2024",
+      institution: "Full-Stack Software Architecture Certification",
+      degree: "Professional Certificate",
+      field: "Advanced Cloud & Web Engineering",
+      period: "2022",
       description:
-        "Comprehensive immersion in AI Software Engineering, LLM agent orchestration, RAG architectures, neural pipelines, and production full-stack deployment.",
+        "Comprehensive industry immersion covering microservices, containerization with Docker, high-availability relational databases, and enterprise security.",
       achievements: [
-        "Verified Credential: Google Drive Certification Document",
+        "Score: 98th Percentile in Distributed Systems Capstone",
       ],
-      certificateUrl: "https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk",
     },
   ],
 

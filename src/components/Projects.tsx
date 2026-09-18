@@ -10,6 +10,7 @@ import {
 import { ExternalLink, Github, Sparkles, Eye, X, Code2, Search, Terminal, Calendar, Clock } from 'lucide-react';
 import SourceCodeViewerModal from './SourceCodeViewerModal';
 import { PROJECT_SOURCE_CODES } from '../data/projectSourceCodes';
+import FadeInUpSection from './FadeInUpSection';
 
 export interface ProjectItem {
   id: number;
@@ -406,7 +407,7 @@ export default function Projects({
 
   return (
     <section id="projects" className="py-20 lg:py-28 relative bg-slate-100/50 dark:bg-slate-900/30" aria-label="Featured Projects">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection>
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
           <span className="text-xs uppercase font-mono tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">
@@ -651,7 +652,7 @@ export default function Projects({
               : undefined
           }
         />
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }
