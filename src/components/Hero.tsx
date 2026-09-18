@@ -39,11 +39,12 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
   const techPills = ['React', 'TypeScript', 'Node.js', 'Laravel', 'Gemini AI', 'Tailwind CSS', 'Docker'];
 
   const languagesList = [
-    { name: 'English', percent: 80, barColor: 'from-blue-500 to-indigo-600' },
-    { name: 'Chanise', percent: 50, barColor: 'from-amber-500 to-red-500' },
-    { name: 'VI', percent: 50, barColor: 'from-emerald-500 to-teal-500' },
-    { name: 'THAI', percent: 70, barColor: 'from-purple-500 to-pink-500' },
-    { name: 'JP', percent: 40, barColor: 'from-rose-500 to-indigo-500' },
+    { name: 'ENGLISH', percent: 80, barColor: 'from-blue-500 to-indigo-600' },
+    { name: 'CHANISE', percent: 50, barColor: 'from-amber-500 to-red-500' },
+    { name: 'VIETNAMESE', percent: 60, barColor: 'from-emerald-500 to-teal-500' },
+    { name: 'THAILAND', percent: 80, barColor: 'from-purple-500 to-pink-500' },
+    { name: 'JAPANESE', percent: 40, barColor: 'from-rose-500 to-indigo-500' },
+    { name: 'KHMER', percent: 99, barColor: 'from-cyan-500 to-blue-600' },
   ];
 
   return (
@@ -241,7 +242,7 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
                       <span>Languages Proficiency</span>
                     </p>
                     <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50">
-                      5 Languages
+                      {languagesList.length} Languages
                     </span>
                   </div>
 

@@ -59,11 +59,12 @@ export const portfolio = {
   ],
 
   languages: [
-    { name: "English", percentage: 80, level: "80%" },
-    { name: "Chanise", percentage: 50, level: "50%" },
-    { name: "VI", percentage: 50, level: "50%" },
-    { name: "THAI", percentage: 70, level: "70%" },
-    { name: "JP", percentage: 40, level: "40%" },
+    { name: "ENGLISH", percentage: 80, level: "80%" },
+    { name: "CHANISE", percentage: 50, level: "50%" },
+    { name: "VIETNAMESE", percentage: 60, level: "60%" },
+    { name: "THAILAND", percentage: 80, level: "80%" },
+    { name: "JAPANESE", percentage: 40, level: "40%" },
+    { name: "KHMER", percentage: 99, level: "99%" },
   ],
 
   skills: [
@@ -514,15 +515,16 @@ export const portfolio = {
       ],
     },
     {
-      institution: "Full-Stack Software Architecture Certification",
-      degree: "Professional Certificate",
-      field: "Advanced Cloud & Web Engineering",
-      period: "2022",
+      institution: "AI SOFTWARE ENGINEER",
+      degree: "Professional Certificate & Specialization",
+      field: "Artificial Intelligence & Advanced Software Engineering",
+      period: "2024",
       description:
-        "Comprehensive industry immersion covering microservices, containerization with Docker, high-availability relational databases, and enterprise security.",
+        "Comprehensive immersion in AI Software Engineering, LLM agent orchestration, RAG architectures, neural pipelines, and production full-stack deployment.",
       achievements: [
-        "Score: 98th Percentile in Distributed Systems Capstone",
+        "Verified Credential: Google Drive Certification Document",
       ],
+      certificateUrl: "https://drive.google.com/file/d/1AX1mL1fN8CuEKqkQUO4Hr7jyNE8wxF8H/view?usp=drivesdk",
     },
   ],
 

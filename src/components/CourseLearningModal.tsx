@@ -21,7 +21,8 @@ import {
   MessageSquare,
   BookmarkCheck,
   Award,
-  GraduationCap
+  GraduationCap,
+  Layers
 } from 'lucide-react';
 import { Course, Lesson, sampleCourses } from '../data/coursesData';
 
@@ -50,6 +51,7 @@ export default function CourseLearningModal({
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [userStudyNotes, setUserStudyNotes] = useState<string>('');
   const [savedNotesMessage, setSavedNotesMessage] = useState<string>('');
+  const [videoSourceMode, setVideoSourceMode] = useState<'video' | 'drive'>('video');
 
   // Track completed lessons
   const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(() => {
@@ -255,6 +257,20 @@ export default function CourseLearningModal({
                 <span>{courseProgressPercentage}% Complete</span>
               </div>
 
+              {/* Google Drive Link Button if available */}
+              {activeCourse.driveUrl && (
+                <a
+                  href={activeCourse.driveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold transition-colors"
+                  title="Open Google Drive Master File"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Google Drive</span>
+                </a>
+              )}
+
               {/* Cinema Mode Toggle */}
               <button
                 type="button"
@@ -282,16 +298,114 @@ export default function CourseLearningModal({
           <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
             {/* LEFT / CENTER: Video Player & Study Content */}
             <div className="flex-1 flex flex-col overflow-y-auto border-r border-slate-200 dark:border-slate-800">
+              {/* Optional Source Switcher Bar if Google Drive link exists */}
+              {(activeLesson?.driveUrl || activeCourse?.driveUrl) && (
+                <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-400 font-mono text-[11px] hidden sm:inline">Source:</span>
+                    <button
+                      type="button"
+                      onClick={() => setVideoSourceMode('video')}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                        videoSourceMode === 'video'
+                          ? 'bg-indigo-600 text-white shadow-xs'
+                          : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700'
+                      }`}
+                    >
+                      <Play className="w-3 h-3 fill-current" />
+                      <span>Video Masterclass (HD)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVideoSourceMode('drive')}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                        videoSourceMode === 'drive'
+                          ? 'bg-indigo-600 text-white shadow-xs'
+                          : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700'
+                      }`}
+                    >
+                      <Layers className="w-3 h-3" />
+                      <span>Google Drive File</span>
+                    </button>
+                  </div>
+
+                  <a
+                    href={activeLesson?.driveUrl || activeCourse?.driveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-400 hover:text-cyan-300 hover:underline"
+                    title="Open Google Drive Link directly"
+                  >
+                    <span>Open Drive File</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
+
               {/* 16:9 Video Player Container */}
               <div className="relative w-full bg-black aspect-video shrink-0 flex items-center justify-center overflow-hidden group">
-                {activeLesson?.youtubeId ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${activeLesson.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
-                    title={activeLesson.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="w-full h-full border-0"
+                {videoSourceMode === 'drive' && (activeLesson?.driveUrl || activeCourse?.driveUrl) ? (
+                  <div className="relative w-full h-full flex flex-col">
+                    <iframe
+                      src={(activeLesson?.driveUrl || activeCourse?.driveUrl || '').replace(/\/view(\?usp=[^&]*)?/, '/preview')}
+                      title={`${activeLesson?.title} - Google Drive`}
+                      allow="autoplay; encrypted-media; fullscreen"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between p-2 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-xs text-white">
+                      <span className="truncate pr-2">Google Drive File Preview</span>
+                      <a
+                        href={activeLesson?.driveUrl || activeCourse?.driveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors shadow-xs"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Open in Google Drive</span>
+                      </a>
+                    </div>
+                  </div>
+                ) : activeLesson?.youtubeId ? (
+                  <div className="relative w-full h-full">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${activeLesson.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`}
+                      title={activeLesson.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                    {(activeLesson?.driveUrl || activeCourse?.driveUrl) && (
+                      <a
+                        href={activeLesson?.driveUrl || activeCourse?.driveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-950/85 hover:bg-slate-900 text-white shadow-md border border-slate-700/60 backdrop-blur-md transition-all cursor-pointer opacity-80 hover:opacity-100"
+                        title="Open Drive materials"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Google Drive File</span>
+                      </a>
+                    )}
+                  </div>
+                ) : activeLesson?.videoUrl && (activeLesson.videoUrl.endsWith('.mp4') || activeLesson.videoUrl.endsWith('.webm')) ? (
+                  <video
+                    src={activeLesson.videoUrl}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-contain"
                   />
+                ) : activeLesson?.videoUrl ? (
+                  <div className="relative w-full h-full">
+                    <iframe
+                      src={activeLesson.videoUrl}
+                      title={activeLesson.title}
+                      allow="autoplay; encrypted-media; fullscreen"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                  </div>
                 ) : (
                   <div className="text-center p-8 text-white">
                     <Play className="w-16 h-16 mx-auto mb-3 text-indigo-400 opacity-80" />
@@ -534,6 +648,31 @@ export default function CourseLearningModal({
                     <h4 className="text-sm font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
                       External Documentation &amp; Source Repositories
                     </h4>
+
+                    {activeCourse.driveUrl && (
+                      <a
+                        href={activeCourse.driveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-500 hover:bg-indigo-100/70 dark:hover:bg-indigo-900/60 transition-all text-sm group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                            <Download className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <span className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 block">
+                              Google Drive Course Files &amp; Lecture Materials
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              {activeCourse.title} &bull; Open Drive File
+                            </span>
+                          </div>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform" />
+                      </a>
+                    )}
+
                     {activeLesson?.resources && activeLesson.resources.length > 0 ? (
                       <div className="space-y-2">
                         {activeLesson.resources.map((res, i) => (

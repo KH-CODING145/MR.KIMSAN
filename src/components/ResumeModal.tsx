@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Download, Printer, Copy, Check, Mail, Phone, MapPin, Briefcase, GraduationCap, Sparkles, Languages } from 'lucide-react';
+import { X, Download, Printer, Copy, Check, Mail, Phone, MapPin, Briefcase, GraduationCap, Sparkles, Languages, ExternalLink } from 'lucide-react';
 import { portfolio } from '../data/portfolio.js';
 
 interface ResumeModalProps {
@@ -208,9 +208,23 @@ ${portfolio.education.map((ed) => `${ed.degree} - ${ed.institution} (${ed.period
               </h2>
               <div className="space-y-3">
                 {portfolio.education.map((edu, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+                  <div key={idx} className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">{edu.degree}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">{edu.degree}</h4>
+                        {edu.certificateUrl && (
+                          <a
+                            href={edu.certificateUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+                            title="View Credential on Google Drive"
+                          >
+                            <span>Verified</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
                       <p className="text-xs text-slate-500 dark:text-slate-400">{edu.institution}</p>
                     </div>
                     <span className="text-xs font-mono text-slate-500">{edu.period}</span>
@@ -226,7 +240,7 @@ ${portfolio.education.map((ed) => `${ed.degree} - ${ed.institution} (${ed.period
                   <Languages className="w-3.5 h-3.5" />
                   <span>Languages Proficiency</span>
                 </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
                   {portfolio.languages.map((lang, idx) => (
                     <div key={idx} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 text-center">
                       <span className="text-xs font-bold text-slate-900 dark:text-white block">{lang.name}</span>

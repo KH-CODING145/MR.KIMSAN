@@ -18,6 +18,7 @@ import CourseLearningModal from './components/CourseLearningModal';
 import SectionDivider from './components/SectionDivider';
 import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
+import ScrollProgressIndicator from './components/ScrollProgressIndicator';
 import {
   Sparkles,
   Code2,
@@ -104,7 +105,10 @@ export default function App() {
       </AnimatePresence>
 
       <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-indigo-500 selection:text-white transition-colors duration-300 flex flex-col font-sans">
-      {/* Sticky Navbar with Active Section Sync */}
+        {/* Top Viewport Scroll Progress Bar */}
+        <ScrollProgressIndicator />
+
+        {/* Sticky Navbar with Active Section Sync */}
       <Navbar
         theme={theme}
         resolvedTheme={resolvedTheme}
