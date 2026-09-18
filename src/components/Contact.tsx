@@ -333,18 +333,16 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 ml-2">
-                        {selectedPlan.name.toLowerCase().includes('starter') && (
-                          <a
-                            id="contact-payway-starter-link"
-                            href="https://link.payway.com.kh/aba?id=18E2ED0EE307&code=461423&acc=093949145&dynamic=true"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors"
-                          >
-                            <span>Pay via ABA PayWay</span>
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        )}
+                        <a
+                          id="contact-payway-checkout-link"
+                          href="https://link.payway.com.kh/aba?id=18E2ED0EE307&code=461423&acc=093949145&dynamic=true"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors"
+                        >
+                          <span>Pay via ABA PayWay</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
                         {onClearPlan && (
                           <button
                             type="button"

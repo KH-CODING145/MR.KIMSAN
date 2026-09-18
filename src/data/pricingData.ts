@@ -71,6 +71,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       '30 days dedicated support & maintenance warranty',
     ],
     ctaText: 'Choose Full-Stack',
+    paymentUrl: 'https://link.payway.com.kh/aba?id=18E2ED0EE307&code=461423&acc=093949145&dynamic=true',
   },
   {
     id: 'ai-enterprise',
@@ -93,6 +94,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Enterprise architectural review, security hardening & 60-day SLA support',
     ],
     ctaText: 'Choose Enterprise',
+    paymentUrl: 'https://link.payway.com.kh/aba?id=18E2ED0EE307&code=461423&acc=093949145&dynamic=true',
   },
 ];
 
