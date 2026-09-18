@@ -525,4 +525,16 @@ export const portfolio = {
       ],
     },
   ],
+
+  testimonials: [
+    {
+      id: "test-1",
+      name: "Sopheak Vathana",
+      role: "Chief Technology Officer",
+      company: "Angkor PayTech Solutions",
+      quote:
+        "Kim San architected our core ABA PayWay and Bakong KHQR transaction microservice from the ground up. His deep grasp of cryptographic payment signatures, zero-drop idempotency keys, and instant reconciliation cut our checkout failure rate to zero.",
+      rating: 5,
+    },
+  ],
 };

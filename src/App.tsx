@@ -18,6 +18,7 @@ import CourseLearningModal from './components/CourseLearningModal';
 import SectionDivider from './components/SectionDivider';
 import SocialWall from './components/SocialWall';
 import Pricing from './components/Pricing';
+import Testimonials from './components/Testimonials';
 import {
   Sparkles,
   Code2,
@@ -28,6 +29,7 @@ import {
   GraduationCap,
   Briefcase,
   BookOpen,
+  MessageSquareQuote,
   Send,
 } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
@@ -46,6 +48,7 @@ const SECTION_IDS = [
   'learning',
   'experience',
   'education',
+  'testimonials',
   'contact',
 ];
 
@@ -180,6 +183,17 @@ export default function App() {
         <Education
           education={portfolio.education}
           onOpenCourseModal={() => handleOpenCourseModal()}
+        />
+
+        <SectionDivider icon={MessageSquareQuote} label="Endorsements" />
+
+        {/* 8.5 Client Testimonials & Feedback Carousel */}
+        <Testimonials
+          onContactClick={(initialMsg) => {
+            if (initialMsg) {
+              setSelectedPlan({ name: 'Custom Project Consulting', price: 'Milestone-Based' });
+            }
+          }}
         />
 
         <SectionDivider icon={Send} label="Connect" />

@@ -70,6 +70,14 @@ export const SECTION_SEO_MAP: Record<string, SectionSeoConfig> = {
     keywords:
       'Computer Science Degree, Cloud Certifications, Software Engineering Credentials, PRO DIGITAL',
   },
+  testimonials: {
+    section: 'testimonials',
+    title: 'Client Testimonials & Feedback — PRO DIGITAL',
+    description:
+      'Read verified reviews and client testimonials from engineering leaders and founders who partnered with PRO DIGITAL on web, fintech, and AI projects.',
+    keywords:
+      'Client Testimonials, Client Reviews, PRO DIGITAL Recommendations, Software Engineering Feedback, Verified Endorsements',
+  },
   contact: {
     section: 'contact',
     title: 'Contact & Collaboration — PRO DIGITAL',

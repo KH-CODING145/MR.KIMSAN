@@ -26,6 +26,7 @@ const navItems = [
   { label: 'Learning', href: '#learning', isLearning: true },
   { label: 'Experience', href: '#experience' },
   { label: 'Education', href: '#education' },
+  { label: 'Reviews', href: '#testimonials' },
   { label: 'Contact', href: '#contact' },
 ];
 
