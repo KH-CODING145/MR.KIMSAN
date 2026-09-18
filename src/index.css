@@ -3,6 +3,26 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @font-face {
+  font-family: 'Broshk';
+  src: url('/fonts/BroshK.woff') format('woff'),
+       url('/fonts/BroshK.ttf') format('truetype'),
+       url('/fonts/BroshK.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Broshk';
+  src: url('/fonts/BroshK.woff') format('woff'),
+       url('/fonts/BroshK.ttf') format('truetype'),
+       url('/fonts/BroshK.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Pervitina Dex';
   src: url('/fonts/PervitinaDex.ttf') format('truetype');
   font-weight: normal;
@@ -35,8 +55,9 @@
 }
 
 @theme {
-  --font-name: 'Pervitina Dex', system-ui, sans-serif;
-  --font-display: 'Pervitina Dex', system-ui, sans-serif;
+  --font-name: 'Broshk', 'Pervitina Dex', system-ui, sans-serif;
+  --font-display: 'Broshk', 'Pervitina Dex', system-ui, sans-serif;
+  --font-broshk: 'Broshk', system-ui, sans-serif;
   --font-typing: 'A4 Speed', system-ui, sans-serif;
 }
 
@@ -52,7 +73,12 @@
 }
 
 .font-name {
-  font-family: 'Pervitina Dex', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Broshk', 'Pervitina Dex', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.font-broshk {
+  font-family: 'Broshk', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: 0.04em;
 }
 
