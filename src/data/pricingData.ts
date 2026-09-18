@@ -12,6 +12,7 @@ export interface PricingPlan {
   deliverables: string[];
   ctaText: string;
   highlightColor: string;
+  paymentUrl?: string;
 }
 
 export interface PricingAddon {
@@ -44,7 +45,8 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Full Git repository handoff with clean documentation',
       '14 days post-launch bug fixing & maintenance warranty',
     ],
-    ctaText: 'Choose Starter ($250)',
+    ctaText: 'Choose Starter',
+    paymentUrl: 'https://link.payway.com.kh/aba?id=18E2ED0EE307&code=461423&acc=093949145&dynamic=true',
   },
   {
     id: 'pro-fullstack',
@@ -68,7 +70,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Docker container setup & automated Cloud Run / VPS deployment',
       '30 days dedicated support & maintenance warranty',
     ],
-    ctaText: 'Choose Full-Stack ($560)',
+    ctaText: 'Choose Full-Stack',
   },
   {
     id: 'ai-enterprise',
@@ -90,7 +92,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Automated CI/CD testing pipelines with GitHub Actions',
       'Enterprise architectural review, security hardening & 60-day SLA support',
     ],
-    ctaText: 'Choose Enterprise ($890)',
+    ctaText: 'Choose Enterprise',
   },
 ];
 

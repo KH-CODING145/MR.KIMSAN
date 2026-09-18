@@ -7,6 +7,7 @@ import {
   Zap,
   ShieldCheck,
   ArrowRight,
+  ExternalLink,
   HelpCircle,
   CreditCard,
   Layers,
@@ -175,19 +176,49 @@ export default function Pricing({ onSelectPlan }: PricingProps) {
                   </div>
                 </div>
 
-                {/* Bottom CTA Button */}
-                <button
-                  type="button"
-                  onClick={() => handleChoosePlan(plan)}
-                  className={`w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
-                    isPopular
-                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 active:scale-98'
-                      : 'bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 active:scale-98'
-                  }`}
-                >
-                  <span>{plan.ctaText}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                {/* Bottom CTA Button / Payment Link */}
+                {plan.paymentUrl ? (
+                  <div className="space-y-2.5">
+                    <a
+                      id={`cta-plan-${plan.id}`}
+                      href={plan.paymentUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 active:scale-98 group"
+                    >
+                      <span>{plan.ctaText}</span>
+                      <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </a>
+
+                    <div className="flex items-center justify-between px-1 text-[11px]">
+                      <span className="inline-flex items-center gap-1 font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                        <CreditCard className="w-3 h-3" />
+                        <span>Pay via ABA PayWay</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleChoosePlan(plan)}
+                        className="font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors cursor-pointer"
+                      >
+                        or discuss scope &rarr;
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    id={`cta-plan-${plan.id}`}
+                    type="button"
+                    onClick={() => handleChoosePlan(plan)}
+                    className={`w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
+                      isPopular
+                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 active:scale-98'
+                        : 'bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 active:scale-98'
+                    }`}
+                  >
+                    <span>{plan.ctaText}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
               </motion.div>
             );
           })}

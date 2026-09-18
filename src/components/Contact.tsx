@@ -332,16 +332,30 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
                           </div>
                         </div>
                       </div>
-                      {onClearPlan && (
-                        <button
-                          type="button"
-                          onClick={onClearPlan}
-                          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer shrink-0 ml-2"
-                          title="Reset to general inquiry"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
+                      <div className="flex items-center gap-2 shrink-0 ml-2">
+                        {selectedPlan.name.toLowerCase().includes('starter') && (
+                          <a
+                            id="contact-payway-starter-link"
+                            href="https://link.payway.com.kh/aba?id=18E2ED0EE307&code=461423&acc=093949145&dynamic=true"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors"
+                          >
+                            <span>Pay via ABA PayWay</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        {onClearPlan && (
+                          <button
+                            type="button"
+                            onClick={onClearPlan}
+                            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                            title="Reset to general inquiry"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
 
