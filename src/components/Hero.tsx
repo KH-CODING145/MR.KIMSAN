@@ -22,6 +22,7 @@ import TypewriterTitle from './TypewriterTitle';
 import FadeInUpSection from './FadeInUpSection';
 import ProDigitalBrandPoster from './ProDigitalBrandPoster';
 import ProDigitalBrandPosterModal from './ProDigitalBrandPosterModal';
+import CodeBuildCreateFutureCard from './CodeBuildCreateFutureCard';
 import Tooltip from './Tooltip';
 
 interface HeroProps {
@@ -49,7 +50,7 @@ interface HeroProps {
 
 export default function Hero({ personal, social, onOpenResume, onOpenCourseModal }: HeroProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [activeVisualTab, setActiveVisualTab] = useState<'profile' | 'poster'>('poster');
+  const [activeVisualTab, setActiveVisualTab] = useState<'small' | 'poster' | 'profile'>('small');
   const [posterModalOpen, setPosterModalOpen] = useState(false);
 
   const socialLinks = [
@@ -257,28 +258,44 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
             transition={{ duration: 0.6, delay: 0.15 }}
           >
             {/* Visual View Switcher */}
-            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-sm mb-3 z-10">
+            <div className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-sm mb-3 z-10">
               <button
                 type="button"
-                onClick={() => setActiveVisualTab('poster')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                  activeVisualTab === 'poster'
+                onClick={() => setActiveVisualTab('small')}
+                className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  activeVisualTab === 'small'
                     ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
+                title="Code Build Create Future Small Card"
               >
                 <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
-                <span>Brand Graphic &amp; Poster</span>
+                <span>Small Card</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveVisualTab('poster')}
+                className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  activeVisualTab === 'poster'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title="Full Official Brand Poster"
+              >
+                <Layout className="w-3.5 h-3.5" />
+                <span>Full Poster</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveVisualTab('profile')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   activeVisualTab === 'profile'
                     ? 'bg-indigo-600 text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
+                title="Personal Photo Profile"
               >
                 <User className="w-3.5 h-3.5" />
                 <span>Photo Profile</span>
@@ -286,7 +303,14 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
             </div>
 
             <div className="relative w-full max-w-[380px] sm:max-w-[440px]">
-              {activeVisualTab === 'poster' ? (
+              {activeVisualTab === 'small' ? (
+                <div className="relative">
+                  <CodeBuildCreateFutureCard
+                    onOpenModal={() => setPosterModalOpen(true)}
+                    onSwitchToFull={() => setActiveVisualTab('poster')}
+                  />
+                </div>
+              ) : activeVisualTab === 'poster' ? (
                 <div className="relative">
                   <ProDigitalBrandPoster onOpenModal={() => setPosterModalOpen(true)} />
                 </div>

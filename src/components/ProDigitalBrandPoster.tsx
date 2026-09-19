@@ -23,6 +23,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { portfolio } from '../data/portfolio';
+import CodeBuildCreateFutureCard from './CodeBuildCreateFutureCard';
 
 interface ProDigitalBrandPosterProps {
   onOpenModal?: () => void;
@@ -40,6 +41,16 @@ export default function ProDigitalBrandPoster({
   const [copiedTelegram, setCopiedTelegram] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
   const [viewMode, setViewMode] = useState<'full' | 'small'>(isCompact ? 'small' : 'full');
+
+  if (viewMode === 'small') {
+    return (
+      <CodeBuildCreateFutureCard
+        onOpenModal={onOpenModal}
+        onSwitchToFull={() => setViewMode('full')}
+        className={className}
+      />
+    );
+  }
 
   const primaryEmail = portfolio.personal?.email || 'pro.digital.dev@gmail.com';
   const secondaryEmail = portfolio.personal?.secondaryEmail || 'kimsan.dev@gmail.com';
@@ -197,14 +208,10 @@ export default function ProDigitalBrandPoster({
               <button
                 type="button"
                 onClick={() => setViewMode('small')}
-                className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
-                  viewMode === 'small'
-                    ? 'bg-cyan-500 text-slate-950 font-bold shadow-xs'
-                    : 'text-cyan-300/80 hover:text-white'
-                }`}
-                title="Compact Small Brand Poster"
+                className="px-2 py-0.5 rounded-md text-cyan-300/80 hover:text-white transition-colors cursor-pointer"
+                title="Switch to 'Code Build Create Future' Small Card"
               >
-                Small
+                Small Card
               </button>
             </div>
 
@@ -276,60 +283,6 @@ export default function ProDigitalBrandPoster({
           </div>
         </div>
 
-        {/* CONDITIONAL BODY: Small Mode vs Full Poster Mode */}
-        {viewMode === 'small' ? (
-          /* ================= SMALL POSTER MODE ================= */
-          <div className="space-y-3 py-1">
-            {/* Quick Skills Mini Badges Strip */}
-            <div>
-              <div className="flex items-center justify-between mb-2 px-1">
-                <span className="text-[10px] font-mono font-bold tracking-widest text-cyan-300 uppercase flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-cyan-400" />
-                  <span>CORE SKILLS &amp; AI</span>
-                </span>
-                <span className="text-[9px] font-mono text-slate-400">Production Ready</span>
-              </div>
-
-              <div className="grid grid-cols-4 gap-1.5">
-                {skillsList.slice(0, 4).map((skill) => (
-                  <div
-                    key={skill.name}
-                    className={`flex items-center gap-1.5 p-1.5 rounded-lg bg-gradient-to-b ${skill.bg} border border-cyan-500/30 text-center justify-center`}
-                  >
-                    <div className="shrink-0 scale-75">{skill.icon}</div>
-                    <span className="text-[10px] font-semibold text-slate-200 truncate">{skill.name}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-4 gap-1.5 mt-1.5">
-                {skillsList.slice(4, 8).map((skill) => (
-                  <div
-                    key={skill.name}
-                    className={`flex items-center gap-1.5 p-1.5 rounded-lg bg-gradient-to-b ${skill.bg} border border-cyan-500/30 text-center justify-center`}
-                  >
-                    <div className="shrink-0 scale-75">{skill.icon}</div>
-                    <span className="text-[10px] font-semibold text-slate-200 truncate">{skill.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Motto & Pillars Bar */}
-            <div className="p-2 rounded-xl bg-[#091b3d]/90 border border-cyan-500/40 flex items-center justify-between text-[10px] font-mono font-bold text-cyan-300">
-              <span className="text-slate-300 font-sans italic font-normal">Better Code Bigger Dreams</span>
-              <div className="flex items-center gap-1.5 tracking-wider">
-                <span>LEARN</span>
-                <span>&bull;</span>
-                <span>BUILD</span>
-                <span>&bull;</span>
-                <span>INNOVATE</span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* ================= FULL DETAILED POSTER MODE ================= */
-          <>
             {/* MY SKILLS Section (2x4 Grid matching the poster) */}
             <div>
               <div className="flex items-center justify-center gap-2 mb-2.5">
@@ -422,8 +375,6 @@ export default function ProDigitalBrandPoster({
                 </div>
               </div>
             </div>
-          </>
-        )}
 
         {/* Bottom Communication Channels & Email Bar (Comprehensive & Interactive) */}
         <div className="pt-3 border-t border-cyan-500/30 space-y-2">
