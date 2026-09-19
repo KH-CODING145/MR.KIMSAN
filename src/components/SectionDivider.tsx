@@ -11,9 +11,14 @@ export default function SectionDivider({ icon: Icon, label, className = '' }: Se
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div
+    <motion.div
       role="separator"
       aria-hidden="true"
+      layout={shouldReduceMotion ? false : 'position'}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4, margin: '-20px 0px' }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={`relative w-full max-w-5xl mx-auto px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-center overflow-hidden select-none pointer-events-none ${className}`}
     >
       {/* Left Gradient Line with subtle pulsing accent */}
@@ -21,8 +26,8 @@ export default function SectionDivider({ icon: Icon, label, className = '' }: Se
         <motion.div
           initial={shouldReduceMotion ? false : { scaleX: 0, opacity: 0 }}
           whileInView={{ scaleX: 1, opacity: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="w-full h-px origin-right bg-gradient-to-r from-transparent via-slate-200 to-indigo-300/60 dark:via-slate-800 dark:to-indigo-500/40"
         />
         {/* Subtle decorative tech tick */}
@@ -31,10 +36,11 @@ export default function SectionDivider({ icon: Icon, label, className = '' }: Se
 
       {/* Center Floating Icon Pill */}
       <motion.div
-        initial={shouldReduceMotion ? false : { scale: 0.8, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.15, ease: 'easeOut' }}
+        layout={shouldReduceMotion ? false : 'position'}
+        initial={shouldReduceMotion ? false : { scale: 0.85, opacity: 0, y: 8 }}
+        whileInView={{ scale: 1, opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.55, delay: shouldReduceMotion ? 0 : 0.1, ease: [0.22, 1, 0.36, 1] }}
         className="mx-3 sm:mx-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-xs backdrop-blur-xs shrink-0 group transition-all"
       >
         <div className="w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
@@ -54,11 +60,11 @@ export default function SectionDivider({ icon: Icon, label, className = '' }: Se
         <motion.div
           initial={shouldReduceMotion ? false : { scaleX: 0, opacity: 0 }}
           whileInView={{ scaleX: 1, opacity: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="w-full h-px origin-left bg-gradient-to-l from-transparent via-slate-200 to-indigo-300/60 dark:via-slate-800 dark:to-indigo-500/40"
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

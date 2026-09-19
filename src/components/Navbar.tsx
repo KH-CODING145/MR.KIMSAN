@@ -40,21 +40,101 @@ interface NavItem {
   href: string;
   icon: LucideIcon;
   tooltip: string;
+  iconName: string;
+  description: string;
   isLearning?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: 'Home', href: '#home', icon: Home, tooltip: 'Home & Overview' },
-  { label: 'About', href: '#about', icon: User, tooltip: 'Bio & Background' },
-  { label: 'Skills', href: '#skills', icon: Cpu, tooltip: 'Tech Stack & Skills' },
-  { label: 'Services', href: '#services', icon: Layers, tooltip: 'Offered Services' },
-  { label: 'Pricing', href: '#pricing', icon: CreditCard, tooltip: 'Plans & Pricing' },
-  { label: 'Projects', href: '#projects', icon: FolderGit2, tooltip: 'Featured Projects' },
-  { label: 'Learning', href: '#learning', icon: Video, isLearning: true, tooltip: 'Video Lessons Studio' },
-  { label: 'Experience', href: '#experience', icon: Briefcase, tooltip: 'Career Experience' },
-  { label: 'Education', href: '#education', icon: GraduationCap, tooltip: 'Degrees & Academic' },
-  { label: 'Reviews', href: '#testimonials', icon: MessageSquareQuote, tooltip: 'Client Testimonials' },
-  { label: 'Contact', href: '#contact', icon: Mail, tooltip: 'Get in Touch' },
+  {
+    label: 'Home',
+    href: '#home',
+    icon: Home,
+    tooltip: 'Home Overview',
+    iconName: 'House icon',
+    description: 'Navigates to the hero introduction and primary overview.',
+  },
+  {
+    label: 'About',
+    href: '#about',
+    icon: User,
+    tooltip: 'About Developer',
+    iconName: 'User silhouette icon',
+    description: 'Developer biography, engineering background, core philosophies, and career statistics.',
+  },
+  {
+    label: 'Skills',
+    href: '#skills',
+    icon: Cpu,
+    tooltip: 'Technical Skills',
+    iconName: 'Microchip (CPU) icon',
+    description: 'Full-stack technologies, frontend & backend frameworks, AI models, and database proficiencies.',
+  },
+  {
+    label: 'Services',
+    href: '#services',
+    icon: Layers,
+    tooltip: 'Offered Services',
+    iconName: 'Stacked layers icon',
+    description: 'Engineering services including web development, API architecture, AI solutions, and system design.',
+  },
+  {
+    label: 'Pricing',
+    href: '#pricing',
+    icon: CreditCard,
+    tooltip: 'Plans & Pricing',
+    iconName: 'Credit card icon',
+    description: 'Transparent pricing tiers, project package milestones, and hourly consulting rates.',
+  },
+  {
+    label: 'Projects',
+    href: '#projects',
+    icon: FolderGit2,
+    tooltip: 'Featured Projects',
+    iconName: 'Git branch folder icon',
+    description: 'Interactive showcase of production applications, deep case studies, and GitHub source code.',
+  },
+  {
+    label: 'Learning',
+    href: '#learning',
+    icon: Video,
+    isLearning: true,
+    tooltip: 'Video Learning Studio',
+    iconName: 'Video camera icon',
+    description: 'Educational programming tutorials, video lessons, and interactive software development courses.',
+  },
+  {
+    label: 'Experience',
+    href: '#experience',
+    icon: Briefcase,
+    tooltip: 'Career Experience',
+    iconName: 'Briefcase icon',
+    description: 'Professional work history, engineering positions, and milestones across software companies.',
+  },
+  {
+    label: 'Education',
+    href: '#education',
+    icon: GraduationCap,
+    tooltip: 'Academic Education',
+    iconName: 'Mortarboard graduation cap icon',
+    description: 'University degrees, academic background, and professional software engineering certifications.',
+  },
+  {
+    label: 'Reviews',
+    href: '#testimonials',
+    icon: MessageSquareQuote,
+    tooltip: 'Client Testimonials',
+    iconName: 'Quote bubble icon',
+    description: 'Client reviews, project testimonials, and recommendations from engineering collaborators.',
+  },
+  {
+    label: 'Contact',
+    href: '#contact',
+    icon: Mail,
+    tooltip: 'Get in Touch',
+    iconName: 'Envelope icon',
+    description: 'Direct communication options, inquiry message form, Telegram link, and consultation booking.',
+  },
 ];
 
 export default function Navbar({
@@ -154,13 +234,18 @@ export default function Navbar({
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo / Brand with Tooltip */}
-            <Tooltip content="PRO DIGITAL Portfolio • Top" position="bottom">
+            {/* Logo / Brand with Accessible Tooltip */}
+            <Tooltip
+              content={`${brandName} • Return to Top`}
+              iconName="Code brackets (< / >) icon"
+              description="Main brand emblem. Click to smoothly return to the top overview of the portfolio."
+              position="bottom"
+            >
               <a
                 href="#home"
                 onClick={(e) => handleNavClick(e, '#home')}
                 className="flex items-center gap-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg p-1"
-                aria-label={`${brandName} - Home`}
+                aria-label={`${brandName} - Return to Top`}
               >
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 p-0.5 shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
                   <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
@@ -179,13 +264,19 @@ export default function Navbar({
               </a>
             </Tooltip>
 
-            {/* Desktop Navigation with Tooltips and Icons */}
+            {/* Desktop Navigation with Accessible Tooltips and Icons */}
             <nav className="hidden xl:flex items-center space-x-1" aria-label="Main Navigation">
               {navItems.map((item) => {
                 const isActive = activeSection === item.href.substring(1);
                 const Icon = item.icon;
                 return (
-                  <Tooltip key={item.href} content={item.tooltip} position="bottom">
+                  <Tooltip
+                    key={item.href}
+                    content={item.tooltip}
+                    iconName={item.iconName}
+                    description={item.description}
+                    position="bottom"
+                  >
                     <a
                       id={`nav-link-${item.href.substring(1)}`}
                       href={item.href}
@@ -228,7 +319,13 @@ export default function Navbar({
             {/* Desktop Right Action: Search, Theme Switcher, Course Hub & Contact */}
             <div className="hidden xl:flex items-center gap-2.5">
               {onOpenSearch && (
-                <Tooltip content="Quick Search Projects, Skills, Sections (⌘K)" position="bottom">
+                <Tooltip
+                  content="Global Search"
+                  iconName="Magnifying glass icon"
+                  description="Instantly search projects, technical skills, tech stack tags, and sections across the portfolio."
+                  shortcut="⌘K"
+                  position="bottom"
+                >
                   <button
                     id="desktop-search-btn"
                     type="button"
@@ -246,7 +343,12 @@ export default function Navbar({
               )}
 
               {onOpenCourseModal && (
-                <Tooltip content="Open Video Learning Studio (វីដេអូមេរៀន)" position="bottom">
+                <Tooltip
+                  content="Video Learning Studio"
+                  iconName="Video camera icon"
+                  description="Opens educational course player with lessons on Laravel, React, Python, and AI."
+                  position="bottom"
+                >
                   <button
                     type="button"
                     onClick={() => onOpenCourseModal()}
@@ -258,10 +360,20 @@ export default function Navbar({
                   </button>
                 </Tooltip>
               )}
-              <Tooltip content={`Theme Mode (${theme})`} position="bottom">
+              <Tooltip
+                content={`Display Theme: ${theme.toUpperCase()}`}
+                iconName="Sun / Moon / Laptop icon"
+                description="Switches the visual color palette between Light mode, Dark mode, or System OS default."
+                position="bottom"
+              >
                 <ThemeToggle theme={theme} resolvedTheme={resolvedTheme} setTheme={setTheme} />
               </Tooltip>
-              <Tooltip content="Get in Touch & Discuss a Project" position="bottom">
+              <Tooltip
+                content="Start a Collaboration"
+                iconName="Diagonal arrow (↗) icon"
+                description="Navigates directly to the Contact section to discuss new projects, hiring, or consulting."
+                position="bottom"
+              >
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, '#contact')}
@@ -277,7 +389,13 @@ export default function Navbar({
             {/* Mobile / Tablet Right Bar: Search, Theme Toggle & Hamburger with Tooltips */}
             <div className="flex xl:hidden items-center gap-1.5">
               {onOpenSearch && (
-                <Tooltip content="Search Portfolio (⌘K)" position="bottom">
+                <Tooltip
+                  content="Global Search"
+                  iconName="Magnifying glass icon"
+                  description="Search projects, technical skills, and sections"
+                  shortcut="⌘K"
+                  position="bottom"
+                >
                   <button
                     id="mobile-search-btn"
                     type="button"
@@ -289,10 +407,20 @@ export default function Navbar({
                   </button>
                 </Tooltip>
               )}
-              <Tooltip content={`Theme (${theme})`} position="bottom">
+              <Tooltip
+                content={`Theme: ${theme.toUpperCase()}`}
+                iconName="Sun / Moon icon"
+                description="Toggle light and dark color modes"
+                position="bottom"
+              >
                 <ThemeToggle theme={theme} resolvedTheme={resolvedTheme} setTheme={setTheme} />
               </Tooltip>
-              <Tooltip content={mobileMenuOpen ? 'Close Menu' : 'Open Menu'} position="left">
+              <Tooltip
+                content={mobileMenuOpen ? 'Close Menu' : 'Open Navigation Menu'}
+                iconName={mobileMenuOpen ? 'Cross (X) icon' : 'Hamburger (3 lines) icon'}
+                description={mobileMenuOpen ? 'Collapses and hides the navigation drawer.' : 'Expands full navigation menu with links to all sections.'}
+                position="left"
+              >
                 <button
                   id="mobile-menu-btn"
                   type="button"

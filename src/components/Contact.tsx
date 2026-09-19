@@ -206,20 +206,24 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
 
               <div className="space-y-4 pt-2">
                 {/* Email Item */}
-                <a
-                  href={`mailto:${personal.email}`}
-                  className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 transition-colors group"
-                >
+                <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 transition-colors group">
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <Mail className="w-5 h-5" />
                   </div>
-                  <div className="overflow-hidden">
-                    <div className="text-xs text-slate-400 font-medium">Direct Email</div>
-                    <div className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                      {personal.email}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-slate-400 font-medium">Direct Email</div>
+                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">Primary</span>
                     </div>
+                    <a
+                      href={`mailto:${personal.email}`}
+                      className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate block hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                      title="Send email via mail client"
+                    >
+                      {personal.email}
+                    </a>
                   </div>
-                </a>
+                </div>
 
                 {/* Phone Item */}
                 {personal.phone && (
@@ -231,7 +235,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
                       <Phone className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs text-slate-400 font-medium">Telephone</div>
+                      <div className="text-xs text-slate-400 font-medium">Telephone / WhatsApp</div>
                       <div className="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                         {personal.phone}
                       </div>
@@ -248,7 +252,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }}
                   className="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/50 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 transition-colors group cursor-pointer"
-                  title="View PRO SOFTWARE on Map"
+                  title="View PRO DIGITAL on Map"
                 >
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                     <MapPin className="w-5 h-5" />
@@ -261,7 +265,7 @@ export default function Contact({ personal, social, selectedPlan, onClearPlan }:
                       </span>
                     </div>
                     <div className="text-sm font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
-                      PRO SOFTWARE &bull; {personal.location}
+                      PRO DIGITAL &bull; {personal.location}
                     </div>
                   </div>
                 </a>

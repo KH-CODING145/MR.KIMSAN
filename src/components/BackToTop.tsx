@@ -10,11 +10,13 @@ interface BackToTopProps {
    */
   targetSectionId?: string;
   onScrollToTop?: () => void;
+  className?: string;
 }
 
 export default function BackToTop({
   targetSectionId = 'home',
   onScrollToTop,
+  className = 'fixed bottom-20 right-5 sm:bottom-22 sm:right-6 z-40',
 }: BackToTopProps) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -65,9 +67,14 @@ export default function BackToTop({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 16 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="fixed bottom-5 right-5 z-40"
+          className={className}
         >
-          <Tooltip content="Scroll to top" position="left">
+          <Tooltip
+            content="Scroll to Top"
+            iconName="Upward arrow (↑) icon"
+            description="Smoothly scrolls the page viewport back to the top overview."
+            position="left"
+          >
             <button
               id="back-to-top-btn"
               type="button"

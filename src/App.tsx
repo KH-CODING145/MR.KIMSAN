@@ -12,6 +12,7 @@ import Education from './components/Education';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
+import AIChatWidget from './components/AIChatWidget';
 import PortfolioSkeleton from './components/PortfolioSkeleton';
 import ResumeModal from './components/ResumeModal';
 import CourseLearningModal from './components/CourseLearningModal';
@@ -268,6 +269,12 @@ export default function App() {
       <BackToTop
         targetSectionId="home"
         onScrollToTop={() => setActiveSection('home')}
+      />
+
+      {/* Lightweight Corner AI Chat Assistant (Gemini Powered) */}
+      <AIChatWidget
+        brandName={portfolio.brand || 'PRO DIGITAL'}
+        developerName={portfolio.personal?.name || 'Mr. KIM SAN'}
       />
 
       {/* Resume / CV Modal */}

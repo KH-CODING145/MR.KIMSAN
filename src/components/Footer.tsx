@@ -1,5 +1,7 @@
 import { MouseEvent } from 'react';
-import { ArrowUp, Github, Linkedin, Facebook, Send, Youtube, Code2, Heart } from 'lucide-react';
+import { ArrowUp, Github, Linkedin, Facebook, Send, Youtube, Code2 } from 'lucide-react';
+import Tooltip from './Tooltip';
+import FadeInUpSection from './FadeInUpSection';
 
 interface FooterProps {
   personal: {
@@ -64,16 +66,46 @@ export default function Footer({ personal, social, brandName = 'PRO DIGITAL' }: 
   ];
 
   const socialLinks = [
-    { name: 'GitHub', href: social.github, icon: Github },
-    { name: 'LinkedIn', href: social.linkedin, icon: Linkedin },
-    { name: 'Facebook', href: social.facebook, icon: Facebook },
-    { name: 'Telegram', href: social.telegram, icon: Send },
-    { name: 'YouTube', href: social.youtube, icon: Youtube },
+    {
+      name: 'GitHub',
+      href: social.github,
+      icon: Github,
+      iconName: 'Octocat / GitHub icon',
+      description: 'Explore public repositories, open-source projects, and code contributions.',
+    },
+    {
+      name: 'LinkedIn',
+      href: social.linkedin,
+      icon: Linkedin,
+      iconName: 'LinkedIn logo icon',
+      description: 'Connect professionally, view verified work experience, and recommendations.',
+    },
+    {
+      name: 'Facebook',
+      href: social.facebook,
+      icon: Facebook,
+      iconName: 'Facebook logo icon',
+      description: 'Follow developer announcements, tech community updates, and posts.',
+    },
+    {
+      name: 'Telegram',
+      href: social.telegram,
+      icon: Send,
+      iconName: 'Paper plane icon',
+      description: 'Start an instant direct conversation with KIM SAN on Telegram (@pro_digital).',
+    },
+    {
+      name: 'YouTube',
+      href: social.youtube,
+      icon: Youtube,
+      iconName: 'Play button / YouTube icon',
+      description: 'Watch programming tutorials, software engineering guides, and live demos.',
+    },
   ].filter((s) => Boolean(s.href));
 
   return (
     <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800/80 pt-16 pb-12 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FadeInUpSection yOffset={24} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-slate-100 dark:border-slate-800/80">
           {/* Brand Col */}
           <div className="lg:col-span-5 space-y-4">
@@ -131,16 +163,23 @@ export default function Footer({ personal, social, brandName = 'PRO DIGITAL' }: 
               {socialLinks.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <a
+                  <Tooltip
                     key={item.name}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200/60 dark:border-slate-800/60 transition-all duration-200"
-                    aria-label={`${personal.name} on ${item.name}`}
+                    content={item.name}
+                    iconName={item.iconName}
+                    description={item.description}
+                    position="top"
                   >
-                    <Icon className="w-4 h-4" />
-                  </a>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200/60 dark:border-slate-800/60 transition-all duration-200 cursor-pointer"
+                      aria-label={`${personal.name} on ${item.name} (${item.iconName})`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </a>
+                  </Tooltip>
                 );
               })}
             </div>
@@ -156,18 +195,25 @@ export default function Footer({ personal, social, brandName = 'PRO DIGITAL' }: 
             <span>&copy; 2026 {brandName} &bull; {personal.name}. All rights reserved.</span>
           </div>
 
-          <button
-            id="footer-back-to-top-btn"
-            type="button"
-            onClick={scrollToTop}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-800 transition-colors shadow-xs"
-            aria-label="Scroll back to top of page"
+          <Tooltip
+            content="Scroll to Top"
+            iconName="Upward arrow (↑) icon"
+            description="Smoothly scrolls back to the top of the page"
+            position="top"
           >
-            <span>Back to top</span>
-            <ArrowUp className="w-3.5 h-3.5" />
-          </button>
+            <button
+              id="footer-back-to-top-btn"
+              type="button"
+              onClick={scrollToTop}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-800 transition-colors shadow-xs cursor-pointer"
+              aria-label="Scroll back to top of page"
+            >
+              <span>Back to top</span>
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
+          </Tooltip>
         </div>
-      </div>
+      </FadeInUpSection>
     </footer>
   );
 }

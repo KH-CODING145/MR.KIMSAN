@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Sparkles, Download, ExternalLink } from 'lucide-react';
 import ProDigitalBrandPoster from './ProDigitalBrandPoster';
+import { portfolio } from '../data/portfolio';
 
 interface ProDigitalBrandPosterModalProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ export default function ProDigitalBrandPosterModal({
   onClose,
 }: ProDigitalBrandPosterModalProps) {
   if (!isOpen) return null;
+
+  const telegramUrl = portfolio.social?.telegram || 'https://t.me/pro_digital';
 
   return (
     <AnimatePresence>
@@ -39,13 +42,13 @@ export default function ProDigitalBrandPosterModal({
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/90 border border-cyan-500/40 text-cyan-300 text-xs font-bold font-mono shadow-xs">
                 <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                <span>PRO DIGITAL BRAND GRAPHIC</span>
+                <span>PRO DIGITAL BRAND GRAPHIC &amp; POSTER</span>
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <a
-                href="https://t.me/pro_digital"
+                href={telegramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors shadow-xs"
@@ -66,7 +69,7 @@ export default function ProDigitalBrandPosterModal({
           </div>
 
           {/* Render the full interactive brand poster */}
-          <ProDigitalBrandPoster />
+          <ProDigitalBrandPoster isCompact={false} />
         </motion.div>
       </div>
     </AnimatePresence>

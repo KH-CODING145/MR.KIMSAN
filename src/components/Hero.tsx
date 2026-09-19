@@ -22,6 +22,7 @@ import TypewriterTitle from './TypewriterTitle';
 import FadeInUpSection from './FadeInUpSection';
 import ProDigitalBrandPoster from './ProDigitalBrandPoster';
 import ProDigitalBrandPosterModal from './ProDigitalBrandPosterModal';
+import Tooltip from './Tooltip';
 
 interface HeroProps {
   personal: {
@@ -52,11 +53,41 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
   const [posterModalOpen, setPosterModalOpen] = useState(false);
 
   const socialLinks = [
-    { name: 'GitHub', href: social.github, icon: Github },
-    { name: 'LinkedIn', href: social.linkedin, icon: Linkedin },
-    { name: 'Facebook', href: social.facebook, icon: Facebook },
-    { name: 'Telegram', href: social.telegram, icon: Send },
-    { name: 'YouTube', href: social.youtube, icon: Youtube },
+    {
+      name: 'GitHub',
+      href: social.github,
+      icon: Github,
+      iconName: 'Octocat / GitHub icon',
+      description: 'Explore public repositories, open-source projects, and code contributions.',
+    },
+    {
+      name: 'LinkedIn',
+      href: social.linkedin,
+      icon: Linkedin,
+      iconName: 'LinkedIn logo icon',
+      description: 'Connect professionally, view verified work experience, and recommendations.',
+    },
+    {
+      name: 'Facebook',
+      href: social.facebook,
+      icon: Facebook,
+      iconName: 'Facebook logo icon',
+      description: 'Follow developer announcements, tech community updates, and posts.',
+    },
+    {
+      name: 'Telegram',
+      href: social.telegram,
+      icon: Send,
+      iconName: 'Paper plane icon',
+      description: 'Start an instant direct conversation with KIM SAN on Telegram (@pro_digital).',
+    },
+    {
+      name: 'YouTube',
+      href: social.youtube,
+      icon: Youtube,
+      iconName: 'Play button / YouTube icon',
+      description: 'Watch programming tutorials, software engineering guides, and live demos.',
+    },
   ].filter((s) => Boolean(s.href));
 
   const techPills = ['React', 'TypeScript', 'Node.js', 'Laravel', 'Gemini AI', 'Tailwind CSS', 'Docker'];
@@ -195,16 +226,23 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
                 {socialLinks.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <a
+                    <Tooltip
                       key={item.name}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200/60 dark:border-slate-800/60 transition-all duration-200"
-                      aria-label={`Visit ${personal.name}'s ${item.name}`}
+                      content={item.name}
+                      iconName={item.iconName}
+                      description={item.description}
+                      position="top"
                     >
-                      <Icon className="w-4 h-4" />
-                    </a>
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200/60 dark:border-slate-800/60 transition-all duration-200 cursor-pointer"
+                        aria-label={`Visit ${personal.name}'s ${item.name} (${item.iconName})`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </a>
+                    </Tooltip>
                   );
                 })}
               </div>
@@ -230,7 +268,7 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
-                <span>Brand Poster</span>
+                <span>Brand Graphic &amp; Poster</span>
               </button>
 
               <button
