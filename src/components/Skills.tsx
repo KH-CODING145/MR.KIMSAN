@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useReducedMotion, useInView } from 'motion/react';
+import { motion, useReducedMotion, useInView, type Variants } from 'motion/react';
 import FadeInUpSection from './FadeInUpSection';
 import {
   Code2,
@@ -187,6 +187,30 @@ export default function Skills({ skills }: SkillsProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const shouldReduceMotion = useReducedMotion();
 
+  const containerVariants: Variants = useMemo(() => ({
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.06,
+        delayChildren: shouldReduceMotion ? 0 : 0.05,
+      },
+    },
+  }), [shouldReduceMotion]);
+
+  const cardVariants: Variants = useMemo(() => ({
+    hidden: shouldReduceMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 28, scale: 0.96 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: shouldReduceMotion ? 0 : 0.45,
+        ease: [0.21, 0.47, 0.32, 0.98],
+      },
+    },
+  }), [shouldReduceMotion]);
+
   const categories = ['All', 'Frontend', 'Backend', 'AI & Automation', 'Database', 'Programming', 'Tools'];
 
   const categoryCounts = useMemo(() => {
@@ -267,64 +291,64 @@ export default function Skills({ skills }: SkillsProps) {
             );
           })}
         </div>
+      </FadeInUpSection>
 
-        {/* Skills Grid */}
+      {/* Skills Grid Container with Staggered Entrance */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
         <motion.div
-          layout
+          key={activeCategory}
+          variants={containerVariants}
+          initial={shouldReduceMotion ? false : 'hidden'}
+          whileInView={shouldReduceMotion ? undefined : 'visible'}
+          viewport={{ once: true, amount: 0.05, margin: '0px 0px -40px 0px' }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <AnimatePresence mode="popLayout">
-            {filteredSkills.map((skill, index) => {
-              const Icon = iconMap[skill.icon] || Code2;
-              return (
-                <motion.div
-                  key={skill.name}
-                  layout
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.15 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.35, delay: shouldReduceMotion ? 0 : Math.min(index * 0.04, 0.25) }}
-                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-500/50 dark:hover:border-indigo-500/50 hover:shadow-md transition-all duration-200 group flex flex-col justify-between"
-                >
-                  <div>
-                    {/* Header: Icon, Name, Category & Experience */}
-                    <div className="flex items-start justify-between mb-3 gap-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-indigo-500 dark:group-hover:text-slate-950 transition-all duration-200 shrink-0">
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-sm text-slate-900 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                            {skill.name}
-                          </h3>
-                          <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                            {skill.category}
-                          </span>
-                        </div>
+          {filteredSkills.map((skill, index) => {
+            const Icon = iconMap[skill.icon] || Code2;
+            return (
+              <motion.div
+                key={skill.name}
+                variants={cardVariants}
+                whileHover={shouldReduceMotion ? undefined : { y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
+                className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-500/50 dark:hover:border-indigo-500/50 hover:shadow-md transition-colors group flex flex-col justify-between"
+              >
+                <div>
+                  {/* Header: Icon, Name, Category & Experience */}
+                  <div className="flex items-start justify-between mb-3 gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-indigo-500 dark:group-hover:text-slate-950 transition-all duration-200 shrink-0">
+                        <Icon className="w-5 h-5" />
                       </div>
-                      <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">
-                        {skill.experience}
-                      </span>
+                      <div>
+                        <h3 className="font-semibold text-sm text-slate-900 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                          {skill.name}
+                        </h3>
+                        <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                          {skill.category}
+                        </span>
+                      </div>
                     </div>
-
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-                      {skill.description}
-                    </p>
+                    <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">
+                      {skill.experience}
+                    </span>
                   </div>
 
-                  {/* Dynamic Scroll-Triggered Animated Proficiency Progress Bar */}
-                  <DynamicProgressBar
-                    level={skill.level}
-                    shouldReduceMotion={shouldReduceMotion}
-                    delay={index * 0.04}
-                  />
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                    {skill.description}
+                  </p>
+                </div>
+
+                {/* Dynamic Scroll-Triggered Animated Proficiency Progress Bar */}
+                <DynamicProgressBar
+                  level={skill.level}
+                  shouldReduceMotion={shouldReduceMotion}
+                  delay={index * 0.05}
+                />
+              </motion.div>
+            );
+          })}
         </motion.div>
-      </FadeInUpSection>
+      </div>
     </section>
   );
 }

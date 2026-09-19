@@ -15,6 +15,7 @@ import {
   Code2,
 } from 'lucide-react';
 import { PROJECT_SOURCE_CODES, SourceFile, ProjectSourceCode } from '../data/projectSourceCodes';
+import ReadingTimeIndicator from './ReadingTimeIndicator';
 
 interface SourceCodeViewerModalProps {
   projectId: number | null;
@@ -143,6 +144,16 @@ export default function SourceCodeViewerModal({
             </div>
 
             <div className="flex items-center gap-2">
+              <ReadingTimeIndicator
+                content={[
+                  projectCode.architectureSummary,
+                  ...projectCode.files.map((f) => `${f.filename} ${f.description}`),
+                ]}
+                variant="badge"
+                label="Specs"
+                className="hidden sm:inline-flex"
+              />
+
               {externalGithubUrl && (
                 <a
                   href={externalGithubUrl}
@@ -390,9 +401,15 @@ export default function SourceCodeViewerModal({
               {activeTab === 'architecture' && (
                 <div className="font-sans text-slate-200 space-y-6">
                   <div>
-                    <h4 className="text-base font-bold text-white mb-2">
-                      System Architecture Overview
-                    </h4>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <h4 className="text-base font-bold text-white">
+                        System Architecture Overview
+                      </h4>
+                      <ReadingTimeIndicator
+                        content={projectCode.architectureSummary}
+                        variant="inline"
+                      />
+                    </div>
                     <p className="text-sm text-slate-300 leading-relaxed bg-slate-900 p-4 rounded-xl border border-slate-800">
                       {projectCode.architectureSummary}
                     </p>

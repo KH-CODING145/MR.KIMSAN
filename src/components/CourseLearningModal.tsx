@@ -24,6 +24,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { Course, Lesson, sampleCourses } from '../data/coursesData';
+import ReadingTimeIndicator from './ReadingTimeIndicator';
 
 interface CourseLearningModalProps {
   isOpen: boolean;
@@ -446,9 +447,20 @@ export default function CourseLearningModal({
                 {activeTab === 'notes' && (
                   <div className="space-y-6 max-w-3xl">
                     <div>
-                      <h4 className="text-sm font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-                        Lesson Summary
-                      </h4>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <h4 className="text-sm font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                          Lesson Summary
+                        </h4>
+                        <ReadingTimeIndicator
+                          content={[
+                            activeLesson?.summary,
+                            ...(activeLesson?.keyPoints || []),
+                            activeLesson?.notes,
+                          ]}
+                          variant="badge"
+                          label="Notes"
+                        />
+                      </div>
                       <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
                         {activeLesson?.summary}
                       </p>

@@ -1,7 +1,26 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Code2, ArrowUpRight, Video, Sparkles } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Code2,
+  ArrowUpRight,
+  Video,
+  Search,
+  Home,
+  User,
+  Cpu,
+  Layers,
+  CreditCard,
+  FolderGit2,
+  Briefcase,
+  GraduationCap,
+  MessageSquareQuote,
+  Mail,
+  LucideIcon,
+} from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import Tooltip from './Tooltip';
 import { ThemeMode } from '../hooks/useTheme';
 
 interface NavbarProps {
@@ -13,20 +32,29 @@ interface NavbarProps {
   activeSection?: string;
   onSectionChange?: (section: string) => void;
   onOpenCourseModal?: (courseId?: string) => void;
+  onOpenSearch?: () => void;
 }
 
-const navItems = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Services', href: '#services' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Learning', href: '#learning', isLearning: true },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Education', href: '#education' },
-  { label: 'Reviews', href: '#testimonials' },
-  { label: 'Contact', href: '#contact' },
+interface NavItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  tooltip: string;
+  isLearning?: boolean;
+}
+
+const navItems: NavItem[] = [
+  { label: 'Home', href: '#home', icon: Home, tooltip: 'Home & Overview' },
+  { label: 'About', href: '#about', icon: User, tooltip: 'Bio & Background' },
+  { label: 'Skills', href: '#skills', icon: Cpu, tooltip: 'Tech Stack & Skills' },
+  { label: 'Services', href: '#services', icon: Layers, tooltip: 'Offered Services' },
+  { label: 'Pricing', href: '#pricing', icon: CreditCard, tooltip: 'Plans & Pricing' },
+  { label: 'Projects', href: '#projects', icon: FolderGit2, tooltip: 'Featured Projects' },
+  { label: 'Learning', href: '#learning', icon: Video, isLearning: true, tooltip: 'Video Lessons Studio' },
+  { label: 'Experience', href: '#experience', icon: Briefcase, tooltip: 'Career Experience' },
+  { label: 'Education', href: '#education', icon: GraduationCap, tooltip: 'Degrees & Academic' },
+  { label: 'Reviews', href: '#testimonials', icon: MessageSquareQuote, tooltip: 'Client Testimonials' },
+  { label: 'Contact', href: '#contact', icon: Mail, tooltip: 'Get in Touch' },
 ];
 
 export default function Navbar({
@@ -38,6 +66,7 @@ export default function Navbar({
   activeSection: externalActiveSection,
   onSectionChange,
   onOpenCourseModal,
+  onOpenSearch,
 }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [internalActiveSection, setInternalActiveSection] = useState('home');
@@ -125,101 +154,156 @@ export default function Navbar({
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo / Brand */}
-            <a
-              href="#home"
-              onClick={(e) => handleNavClick(e, '#home')}
-              className="flex items-center gap-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg p-1"
-              aria-label={`${brandName} - Home`}
-            >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 p-0.5 shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
-                <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
-                  <Code2 className="w-4 h-4 text-cyan-400" />
+            {/* Logo / Brand with Tooltip */}
+            <Tooltip content="PRO DIGITAL Portfolio • Top" position="bottom">
+              <a
+                href="#home"
+                onClick={(e) => handleNavClick(e, '#home')}
+                className="flex items-center gap-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg p-1"
+                aria-label={`${brandName} - Home`}
+              >
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 p-0.5 shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
+                  <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
+                    <Code2 className="w-4 h-4 text-cyan-400" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                  {brandName}
-                </span>
-                <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  <span className="font-name font-normal text-sm normal-case tracking-normal text-slate-800 dark:text-slate-200">{personalName}</span>
-                  <span>&bull; Portfolio</span>
-                </span>
-              </div>
-            </a>
+                <div className="flex flex-col">
+                  <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    {brandName}
+                  </span>
+                  <span className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <span className="font-name font-normal text-sm normal-case tracking-normal text-slate-800 dark:text-slate-200">{personalName}</span>
+                    <span>&bull; Portfolio</span>
+                  </span>
+                </div>
+              </a>
+            </Tooltip>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation with Tooltips and Icons */}
             <nav className="hidden xl:flex items-center space-x-1" aria-label="Main Navigation">
               {navItems.map((item) => {
                 const isActive = activeSection === item.href.substring(1);
+                const Icon = item.icon;
                 return (
-                  <a
-                    key={item.href}
-                    id={`nav-link-${item.href.substring(1)}`}
-                    href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href)}
-                    className={`relative px-3 py-1.5 text-xs font-medium rounded-lg transition-colors duration-200 cursor-pointer flex items-center ${
-                      isActive
-                        ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-900/60'
-                    }`}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    <span>{item.label}</span>
-                    {item.isLearning && (
-                      <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-xs">
-                        VIDEO
-                      </span>
-                    )}
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeNavTab"
-                        className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 dark:bg-indigo-400 rounded-full"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  <Tooltip key={item.href} content={item.tooltip} position="bottom">
+                    <a
+                      id={`nav-link-${item.href.substring(1)}`}
+                      href={item.href}
+                      onClick={(e) => handleNavClick(e, item.href)}
+                      className={`group relative px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors duration-200 cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                        isActive
+                          ? 'text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50/70 dark:bg-indigo-950/40'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-900/60'
+                      }`}
+                      aria-current={isActive ? 'page' : undefined}
+                      aria-label={`${item.label} - ${item.tooltip}`}
+                    >
+                      <Icon
+                        className={`w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110 ${
+                          isActive
+                            ? 'text-indigo-600 dark:text-indigo-400'
+                            : 'text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+                        }`}
+                        aria-hidden="true"
                       />
-                    )}
-                  </a>
+                      <span>{item.label}</span>
+                      {item.isLearning && (
+                        <span className="ml-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-xs">
+                          VIDEO
+                        </span>
+                      )}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeNavTab"
+                          className="absolute bottom-0 left-2 right-2 h-0.5 bg-indigo-600 dark:bg-indigo-400 rounded-full"
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </a>
+                  </Tooltip>
                 );
               })}
             </nav>
 
-            {/* Desktop Right Action: Theme Switcher, Course Hub & Contact */}
+            {/* Desktop Right Action: Search, Theme Switcher, Course Hub & Contact */}
             <div className="hidden xl:flex items-center gap-2.5">
-              {onOpenCourseModal && (
-                <button
-                  type="button"
-                  onClick={() => onOpenCourseModal()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/80 border border-indigo-200/80 dark:border-indigo-800 transition-colors active:scale-95 shadow-xs cursor-pointer"
-                  title="Course / Learning Video Studio (វីដេអូមេរៀន)"
-                >
-                  <Video className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                  <span>Courses</span>
-                </button>
+              {onOpenSearch && (
+                <Tooltip content="Quick Search Projects, Skills, Sections (⌘K)" position="bottom">
+                  <button
+                    id="desktop-search-btn"
+                    type="button"
+                    onClick={onOpenSearch}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100/90 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-slate-700/80 transition-all active:scale-95 cursor-pointer shadow-2xs group"
+                    aria-label="Search portfolio (Press ⌘K)"
+                  >
+                    <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                    <span className="text-slate-600 dark:text-slate-300">Search...</span>
+                    <kbd className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-semibold bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 rounded border border-slate-200 dark:border-slate-700/80 shadow-2xs">
+                      ⌘K
+                    </kbd>
+                  </button>
+                </Tooltip>
               )}
-              <ThemeToggle theme={theme} resolvedTheme={resolvedTheme} setTheme={setTheme} />
-              <a
-                href="#contact"
-                onClick={(e) => handleNavClick(e, '#contact')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition-all shadow-sm shadow-indigo-600/25 cursor-pointer"
-              >
-                <span>Get in Touch</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </a>
+
+              {onOpenCourseModal && (
+                <Tooltip content="Open Video Learning Studio (វីដេអូមេរៀន)" position="bottom">
+                  <button
+                    type="button"
+                    onClick={() => onOpenCourseModal()}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/80 border border-indigo-200/80 dark:border-indigo-800 transition-colors active:scale-95 shadow-xs cursor-pointer"
+                    aria-label="Course / Learning Video Studio"
+                  >
+                    <Video className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>Courses</span>
+                  </button>
+                </Tooltip>
+              )}
+              <Tooltip content={`Theme Mode (${theme})`} position="bottom">
+                <ThemeToggle theme={theme} resolvedTheme={resolvedTheme} setTheme={setTheme} />
+              </Tooltip>
+              <Tooltip content="Get in Touch & Discuss a Project" position="bottom">
+                <a
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, '#contact')}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition-all shadow-sm shadow-indigo-600/25 cursor-pointer"
+                  aria-label="Contact - Get in Touch"
+                >
+                  <span>Get in Touch</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+              </Tooltip>
             </div>
 
-            {/* Mobile / Tablet Right Bar: Theme Toggle & Hamburger */}
-            <div className="flex xl:hidden items-center gap-2">
-              <ThemeToggle theme={theme} resolvedTheme={resolvedTheme} setTheme={setTheme} />
-              <button
-                id="mobile-menu-btn"
-                type="button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                aria-expanded={mobileMenuOpen}
-                aria-label="Toggle mobile menu"
-              >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
+            {/* Mobile / Tablet Right Bar: Search, Theme Toggle & Hamburger with Tooltips */}
+            <div className="flex xl:hidden items-center gap-1.5">
+              {onOpenSearch && (
+                <Tooltip content="Search Portfolio (⌘K)" position="bottom">
+                  <button
+                    id="mobile-search-btn"
+                    type="button"
+                    onClick={onOpenSearch}
+                    className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                    aria-label="Open search palette"
+                  >
+                    <Search className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  </button>
+                </Tooltip>
+              )}
+              <Tooltip content={`Theme (${theme})`} position="bottom">
+                <ThemeToggle theme={theme} resolvedTheme={resolvedTheme} setTheme={setTheme} />
+              </Tooltip>
+              <Tooltip content={mobileMenuOpen ? 'Close Menu' : 'Open Menu'} position="left">
+                <button
+                  id="mobile-menu-btn"
+                  type="button"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                  aria-expanded={mobileMenuOpen}
+                  aria-label="Toggle mobile menu"
+                >
+                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                </button>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -235,8 +319,28 @@ export default function Navbar({
               transition={{ duration: 0.2 }}
               className="xl:hidden bg-white/95 dark:bg-slate-950/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur-lg px-4 pt-2 pb-6 space-y-1 shadow-xl"
             >
+              {onOpenSearch && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenSearch();
+                  }}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 mb-2 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200/80 dark:border-indigo-800 text-sm font-semibold transition-all cursor-pointer shadow-xs"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Search className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span>Search Projects, Skills, Sections...</span>
+                  </div>
+                  <kbd className="px-2 py-0.5 text-[10px] font-mono bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-300 rounded border border-indigo-200 dark:border-indigo-800">
+                    ⌘K
+                  </kbd>
+                </button>
+              )}
+
               {navItems.map((item) => {
                 const isActive = activeSection === item.href.substring(1);
+                const Icon = item.icon;
                 return (
                   <a
                     key={item.href}
@@ -248,7 +352,8 @@ export default function Navbar({
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
                       <span>{item.label}</span>
                     </div>
                     {item.isLearning && (

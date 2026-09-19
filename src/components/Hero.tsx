@@ -285,7 +285,7 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
             </div>
           </motion.div>
         </div>
-      </div>
+      </FadeInUpSection>
     </section>
   );
 }

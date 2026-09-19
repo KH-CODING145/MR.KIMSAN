@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, MouseEvent } from 'react';
+import { useState, useMemo, useEffect, useRef, MouseEvent, UIEvent } from 'react';
 import {
   motion,
   AnimatePresence,
@@ -7,9 +7,36 @@ import {
   useSpring,
   useTransform,
 } from 'motion/react';
-import { ExternalLink, Github, Sparkles, Eye, X, Code2, Search, Terminal, Calendar, Clock } from 'lucide-react';
+import {
+  ExternalLink,
+  Github,
+  Sparkles,
+  Eye,
+  X,
+  Code2,
+  Search,
+  Terminal,
+  Calendar,
+  Clock,
+  BookOpen,
+  CheckCircle2,
+  TrendingUp,
+  Layers,
+  FileText,
+  AlertCircle,
+  Lightbulb,
+  Check,
+  SlidersHorizontal,
+  Filter,
+  RotateCcw,
+} from 'lucide-react';
 import SourceCodeViewerModal from './SourceCodeViewerModal';
 import { PROJECT_SOURCE_CODES } from '../data/projectSourceCodes';
+import { PROJECT_CASE_STUDIES, getCaseStudyCorpus } from '../data/projectCaseStudies';
+import ReadingTimeIndicator from './ReadingTimeIndicator';
+import CircularScrollProgress from './CircularScrollProgress';
+import LazyImage from './LazyImage';
+import { calculateReadingTime } from '../utils/readingTime';
 import FadeInUpSection from './FadeInUpSection';
 
 export interface ProjectItem {
@@ -28,32 +55,73 @@ export interface ProjectItem {
 }
 
 /**
- * Calculates estimated reading time for a project breakdown based on its full description,
- * stack architecture, and associated source code documentation.
+ * Compiles complete text corpus for a project including title, description,
+ * deep-dive case study, architecture summary, and source code files.
  */
-export function calculateProjectReadingTime(project: ProjectItem): number {
-  if (project.readingTimeMinutes) return project.readingTimeMinutes;
+export function getProjectContentCorpus(project: ProjectItem): string[] {
+  const caseStudy = PROJECT_CASE_STUDIES[project.id];
   const source = PROJECT_SOURCE_CODES[project.id];
-  const textCorpus = [
+
+  return [
     project.title,
     project.description,
     project.highlight || '',
     project.technologies.join(' '),
+    caseStudy ? getCaseStudyCorpus(caseStudy) : '',
     source?.architectureSummary || '',
     ...(source?.files.map((f) => `${f.filename} ${f.description}`) || []),
-    ...(source?.simulationOutput?.logs || []),
-  ].join(' ');
+  ];
+}
 
-  const words = textCorpus.trim().split(/\s+/).filter(Boolean).length;
-  // Standard technical breakdown reading speed: ~160 words per minute
-  return Math.max(1, Math.round(words / 160));
+/**
+ * Calculates estimated reading time for a project breakdown based on its full description,
+ * stack architecture, case study, and associated source code documentation.
+ */
+export function calculateProjectReadingTime(project: ProjectItem): number {
+  if (project.readingTimeMinutes) return project.readingTimeMinutes;
+  const corpus = getProjectContentCorpus(project);
+  return calculateReadingTime(corpus, 'standard').minutes;
+}
+
+// Helper to check if a project satisfies a specific technology filter
+export function projectMatchesTech(project: ProjectItem, tech: string): boolean {
+  const normTech = tech.trim().toLowerCase();
+  if (normTech === 'ai') {
+    return (
+      project.technologies.some(
+        (t) => t.toLowerCase().includes('ai') || t.toLowerCase().includes('gemini') || t.toLowerCase().includes('llm')
+      ) ||
+      project.title.toLowerCase().includes('ai') ||
+      project.description.toLowerCase().includes('ai') ||
+      Boolean(project.highlight && project.highlight.toLowerCase().includes('ai')) ||
+      project.category.toLowerCase().includes('ai')
+    );
+  }
+
+  return project.technologies.some((t) => {
+    const normT = t.toLowerCase();
+    return normT === normTech || normT.includes(normTech) || normTech.includes(normT);
+  });
+}
+
+// Helper to check if a specific tech tag matches any active technology filter
+export function isTechActive(techBadge: string, selectedTechs: string[]): boolean {
+  if (!selectedTechs || selectedTechs.length === 0) return false;
+  const normBadge = techBadge.trim().toLowerCase();
+  return selectedTechs.some((selected) => {
+    const normSel = selected.trim().toLowerCase();
+    if (normSel === 'ai') {
+      return normBadge.includes('ai') || normBadge.includes('gemini') || normBadge.includes('llm');
+    }
+    return normBadge === normSel || normBadge.includes(normSel) || normSel.includes(normBadge);
+  });
 }
 
 interface TiltProjectCardProps {
   key?: string | number;
   project: ProjectItem;
-  activeFilter: string;
-  onFilterTech: (tech: string) => void;
+  selectedTechs: string[];
+  onToggleTech: (tech: string) => void;
   onSelectProject: (project: ProjectItem) => void;
   onInspectCode: (projectId: number) => void;
   shouldReduceMotion: boolean | null;
@@ -61,8 +129,8 @@ interface TiltProjectCardProps {
 
 function TiltProjectCard({
   project,
-  activeFilter,
-  onFilterTech,
+  selectedTechs,
+  onToggleTech,
   onSelectProject,
   onInspectCode,
   shouldReduceMotion,
@@ -158,13 +226,14 @@ function TiltProjectCard({
         {/* Project Image & Overlay */}
         <div>
           <div className="relative aspect-[16/10] overflow-hidden bg-slate-950">
-            <img
+            <LazyImage
               src={project.image}
               alt={project.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
+              aspectRatio="aspect-[16/10]"
+              rootMargin="250px 0px"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity pointer-events-none" />
 
             {/* Category badge */}
             <div className="absolute top-3 left-3 z-10">
@@ -202,11 +271,12 @@ function TiltProjectCard({
                   e.stopPropagation();
                   onSelectProject(project);
                 }}
-                className="p-2 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-800 dark:text-slate-200 hover:scale-110 transition-transform shadow-sm cursor-pointer"
-                title="Overview Details"
-                aria-label={`Quick overview for ${project.title}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/95 hover:bg-indigo-600 backdrop-blur-md text-white text-xs font-semibold hover:scale-105 transition-all shadow-sm cursor-pointer"
+                title="Read Comprehensive Case Study"
+                aria-label={`Read case study for ${project.title}`}
               >
-                <Eye className="w-4 h-4" />
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Case Study</span>
               </button>
             </div>
           </div>
@@ -220,13 +290,10 @@ function TiltProjectCard({
                   {project.category}
                 </span>
                 <span className="text-slate-300 dark:text-slate-700">&bull;</span>
-                <div
-                  className="inline-flex items-center gap-1 text-[11px] font-mono text-slate-500 dark:text-slate-400"
-                  title="Estimated reading time for this project breakdown and architecture"
-                >
-                  <Clock className="w-3 h-3 text-indigo-500 shrink-0" />
-                  <span>{calculateProjectReadingTime(project)} min read</span>
-                </div>
+                <ReadingTimeIndicator
+                  content={getProjectContentCorpus(project)}
+                  variant="badge"
+                />
               </div>
 
               {(project.dateCompleted || project.lastUpdated) && (
@@ -240,33 +307,38 @@ function TiltProjectCard({
               )}
             </div>
 
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+            <h3
+              onClick={() => onSelectProject(project)}
+              className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer"
+              title="Click to read full case study"
+            >
               {project.title}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4 line-clamp-3">
               {project.description}
             </p>
 
-            {/* Technologies tags - clickable for quick tech stack filtering */}
+            {/* Technologies tags - clickable for quick tech stack toggling */}
             <div className="flex flex-wrap gap-1.5 mb-6">
               {project.technologies.map((tech) => {
-                const isSelectedTech = activeFilter.toLowerCase() === tech.toLowerCase();
+                const isSelectedTech = isTechActive(tech, selectedTechs);
                 return (
                   <button
                     key={tech}
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onFilterTech(isSelectedTech ? 'All' : tech);
+                      onToggleTech(tech);
                     }}
-                    title={`Filter projects by ${tech}`}
-                    className={`px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer ${
+                    title={isSelectedTech ? `Remove ${tech} filter` : `Filter by ${tech}`}
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-all duration-150 cursor-pointer ${
                       isSelectedTech
-                        ? 'bg-indigo-600 text-white shadow-xs'
+                        ? 'bg-indigo-600 text-white shadow-xs font-semibold'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200/60 dark:border-slate-700/60'
                     }`}
                   >
-                    {tech}
+                    {isSelectedTech && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                    <span>{tech}</span>
                   </button>
                 );
               })}
@@ -274,16 +346,30 @@ function TiltProjectCard({
           </div>
         </div>
 
-        {/* Footer Buttons: Inspect Source Code & Live Demo */}
+        {/* Footer Buttons: Case Study, Inspect Source Code & Live Demo */}
         <div className="relative z-10 px-6 pb-6 pt-2 flex items-center gap-2 border-t border-slate-100 dark:border-slate-800/80">
-          {/* Inspect Source Code Full Function Button */}
+          {/* Read Case Study Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectProject(project);
+            }}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200/80 dark:border-indigo-800/80 active:scale-95 transition-all cursor-pointer"
+            title="Read case study with dynamic time to read"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
+            <span>Case Study</span>
+          </button>
+
+          {/* Inspect Source Code Button */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onInspectCode(project.id);
             }}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer"
           >
             <Code2 className="w-3.5 h-3.5 text-indigo-500" />
             <span>Source Code</span>
@@ -344,19 +430,66 @@ export default function Projects({
   selectedProject: externalSelectedProject,
   onSelectProject,
 }: ProjectsProps) {
-  const [activeFilter, setActiveFilter] = useState<string>('All');
+  // Technology stack toggle filtering state
+  const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
+  const [matchMode, setMatchMode] = useState<'any' | 'all'>('any');
+  const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showAllTechStacks, setShowAllTechStacks] = useState<boolean>(false);
+
   const [internalSelectedProject, setInternalSelectedProject] = useState<ProjectItem | null>(null);
   const [inspectCodeProjectId, setInspectCodeProjectId] = useState<number | null>(null);
+  const [modalActiveTab, setModalActiveTab] = useState<'case-study' | 'overview'>('case-study');
+  const [modalScrollProgress, setModalScrollProgress] = useState<number>(0);
   const shouldReduceMotion = useReducedMotion();
 
   const selectedProject =
     externalSelectedProject !== undefined ? externalSelectedProject : internalSelectedProject;
 
+  const modalScrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScrollModalToTop = () => {
+    if (modalScrollContainerRef.current) {
+      modalScrollContainerRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  // Live corpus and reading time estimation for the currently active case study
+  const activeCaseStudyCorpus = useMemo(() => {
+    if (!selectedProject) return [];
+    const caseStudy = PROJECT_CASE_STUDIES[selectedProject.id];
+    return caseStudy ? getCaseStudyCorpus(caseStudy) : getProjectContentCorpus(selectedProject);
+  }, [selectedProject]);
+
+  const activeCaseStudyReadingMinutes = useMemo(() => {
+    if (!activeCaseStudyCorpus || activeCaseStudyCorpus.length === 0) return 3;
+    return calculateReadingTime(activeCaseStudyCorpus).minutes;
+  }, [activeCaseStudyCorpus]);
+
   const handleSelect = (project: ProjectItem | null) => {
     setInternalSelectedProject(project);
+    if (project) {
+      setModalScrollProgress(0);
+      setModalActiveTab('case-study');
+      if (modalScrollContainerRef.current) {
+        modalScrollContainerRef.current.scrollTop = 0;
+      }
+    }
     if (onSelectProject) {
       onSelectProject(project);
+    }
+  };
+
+  const handleModalScroll = (e: UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const maxScroll = target.scrollHeight - target.clientHeight;
+    if (maxScroll > 0) {
+      setModalScrollProgress(Math.min(1, Math.max(0, target.scrollTop / maxScroll)));
+    } else {
+      setModalScrollProgress(0);
     }
   };
 
@@ -378,32 +511,111 @@ export default function Projects({
     return () => window.removeEventListener('hashchange', handleHash);
   }, [projects]);
 
-  // Tech stack & category filter options
-  const filterCategories = ['All', 'React', 'Laravel', 'Node.js', 'Python', 'Full Stack'];
+  // Primary curated technology stacks
+  const PRIMARY_TECH_STACKS = [
+    'React',
+    'Node.js',
+    'AI',
+    'Laravel',
+    'Docker',
+    'Python',
+    'PostgreSQL',
+    'Tailwind CSS',
+    'Firebase',
+  ];
 
+  // Dynamically extract any remaining unique technology tags from projects
+  const allExtractedTechs = useMemo(() => {
+    const list: string[] = [];
+    projects.forEach((p) => {
+      p.technologies.forEach((t) => {
+        const canonical = t.toLowerCase().includes('gemini') || t.toLowerCase() === 'ai' ? 'AI' : t;
+        if (!list.includes(canonical)) {
+          list.push(canonical);
+        }
+      });
+    });
+    return list;
+  }, [projects]);
+
+  const secondaryTechStacks = useMemo(() => {
+    return allExtractedTechs.filter(
+      (t) => !PRIMARY_TECH_STACKS.some((pt) => pt.toLowerCase() === t.toLowerCase())
+    );
+  }, [allExtractedTechs]);
+
+  const visibleTechStacks = showAllTechStacks
+    ? Array.from(new Set([...PRIMARY_TECH_STACKS, ...secondaryTechStacks]))
+    : PRIMARY_TECH_STACKS;
+
+  // Project count mapping per tech stack
+  const techCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const allPossible = Array.from(new Set([...PRIMARY_TECH_STACKS, ...allExtractedTechs]));
+    allPossible.forEach((tech) => {
+      counts[tech] = projects.filter((p) => projectMatchesTech(p, tech)).length;
+    });
+    return counts;
+  }, [projects, allExtractedTechs]);
+
+  // Toggle technology stack filter
+  const handleToggleTech = (tech: string) => {
+    const canonical =
+      tech.toLowerCase().includes('gemini') || tech.toLowerCase() === 'ai' ? 'AI' : tech;
+    setSelectedTechs((prev) => {
+      const isPresent = prev.some((t) => t.toLowerCase() === canonical.toLowerCase());
+      if (isPresent) {
+        return prev.filter((t) => t.toLowerCase() !== canonical.toLowerCase());
+      } else {
+        return [...prev, canonical];
+      }
+    });
+  };
+
+  const handleClearTechFilters = () => {
+    setSelectedTechs([]);
+  };
+
+  const categories = ['All', 'Full Stack', 'React', 'Laravel', 'Software', 'Web'];
+
+  // Filtered projects computed based on active tech stack toggles, category, and search query
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {
-      const filterLower = activeFilter.toLowerCase();
-      const matchesCategory =
-        activeFilter === 'All' ||
-        p.category.toLowerCase() === filterLower ||
-        p.technologies.some((t) => t.toLowerCase() === filterLower);
+      // 1. Tech stack toggle filter
+      let matchesTech = true;
+      if (selectedTechs.length > 0) {
+        if (matchMode === 'any') {
+          matchesTech = selectedTechs.some((tech) => projectMatchesTech(p, tech));
+        } else {
+          matchesTech = selectedTechs.every((tech) => projectMatchesTech(p, tech));
+        }
+      }
+      if (!matchesTech) return false;
 
+      // 2. Category filter
+      if (activeCategory !== 'All') {
+        const catLower = activeCategory.toLowerCase();
+        const matchesCat =
+          p.category.toLowerCase() === catLower || p.category.toLowerCase().includes(catLower);
+        if (!matchesCat) return false;
+      }
+
+      // 3. Search query filter
       const query = searchQuery.trim().toLowerCase();
-      if (!query) return matchesCategory;
+      if (!query) return true;
 
-      const matchesQuery =
+      return (
         p.title.toLowerCase().includes(query) ||
         p.description.toLowerCase().includes(query) ||
         p.technologies.some((t) => t.toLowerCase().includes(query)) ||
         (p.highlight && p.highlight.toLowerCase().includes(query)) ||
+        (p.category && p.category.toLowerCase().includes(query)) ||
         (p.dateCompleted && p.dateCompleted.toLowerCase().includes(query)) ||
         (p.lastUpdated && p.lastUpdated.toLowerCase().includes(query)) ||
-        `${calculateProjectReadingTime(p)} min read`.includes(query);
-
-      return matchesCategory && matchesQuery;
+        `${calculateProjectReadingTime(p)} min read`.includes(query)
+      );
     });
-  }, [projects, activeFilter, searchQuery]);
+  }, [projects, selectedTechs, matchMode, activeCategory, searchQuery]);
 
   return (
     <section id="projects" className="py-20 lg:py-28 relative bg-slate-100/50 dark:bg-slate-900/30" aria-label="Featured Projects">
@@ -422,67 +634,227 @@ export default function Projects({
           </p>
         </div>
 
-        {/* Filter & Search Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-          {/* Tech Stack & Category Tabs */}
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full sm:w-auto" role="tablist" aria-label="Project Tech Stacks and Categories">
-            {filterCategories.map((filter) => {
-              const isActive = activeFilter.toLowerCase() === filter.toLowerCase();
+        {/* Technology Stack Filtering Dashboard */}
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 mb-8 shadow-xs">
+          {/* Header Row: Filter title, match mode, reset button */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-3.5 pb-3 border-b border-slate-200/60 dark:border-slate-800/80">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                <SlidersHorizontal className="w-4 h-4" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                Filter by Tech Stack
+              </span>
+              {selectedTechs.length > 0 && (
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                  {selectedTechs.length} active
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              {/* Match Mode Switcher (Visible when 2 or more tech stacks are toggled) */}
+              {selectedTechs.length >= 2 && (
+                <div className="inline-flex items-center gap-1 p-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium border border-slate-200 dark:border-slate-700">
+                  <span className="px-1.5 text-slate-400 text-[10px] uppercase font-mono">Match:</span>
+                  <button
+                    type="button"
+                    onClick={() => setMatchMode('any')}
+                    className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                      matchMode === 'any'
+                        ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 font-bold shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                    title="Shows projects that use AT LEAST ONE of the selected technology stacks"
+                  >
+                    Any (OR)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMatchMode('all')}
+                    className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                      matchMode === 'all'
+                        ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 font-bold shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                    title="Shows projects that use ALL of the selected technology stacks"
+                  >
+                    All (AND)
+                  </button>
+                </div>
+              )}
+
+              {/* Reset All Filters Button */}
+              {(selectedTechs.length > 0 || activeCategory !== 'All' || searchQuery) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleClearTechFilters();
+                    setActiveCategory('All');
+                    setSearchQuery('');
+                  }}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  title="Reset all active filters"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Interactive Technology Stack Toggle Chips */}
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            {/* All Projects Pill */}
+            <button
+              type="button"
+              role="button"
+              aria-pressed={selectedTechs.length === 0}
+              onClick={handleClearTechFilters}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                selectedTechs.length === 0
+                  ? 'bg-indigo-600 text-white shadow-xs scale-102 ring-2 ring-indigo-500/20'
+                  : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+              }`}
+            >
+              <span>All Tech</span>
+              <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                selectedTechs.length === 0
+                  ? 'bg-white/20 text-white'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+              }`}>
+                {projects.length}
+              </span>
+            </button>
+
+            {/* Tech Stack Toggle Buttons */}
+            {visibleTechStacks.map((tech) => {
+              const isSelected = selectedTechs.some((t) => t.toLowerCase() === tech.toLowerCase());
+              const count = techCounts[tech] || 0;
+
               return (
                 <button
-                  key={filter}
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer ${
-                    isActive
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 scale-105'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+                  key={tech}
+                  type="button"
+                  role="button"
+                  aria-pressed={isSelected}
+                  onClick={() => handleToggleTech(tech)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white shadow-xs scale-102 ring-2 ring-indigo-400/40'
+                      : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 border border-slate-200 dark:border-slate-800'
                   }`}
+                  title={isSelected ? `Click to unselect ${tech}` : `Click to filter by ${tech}`}
                 >
-                  {filter}
+                  {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                  <span>{tech}</span>
+                  <span
+                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                      isSelected
+                        ? 'bg-white/25 text-white'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                    }`}
+                  >
+                    {count}
+                  </span>
                 </button>
               );
             })}
 
-            {/* Custom active tech stack badge if selected via tag click */}
-            {!filterCategories.map((c) => c.toLowerCase()).includes(activeFilter.toLowerCase()) && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md shadow-indigo-600/25">
-                <span>Tech: {activeFilter}</span>
-                <button
-                  type="button"
-                  onClick={() => setActiveFilter('All')}
-                  className="hover:text-indigo-200 cursor-pointer"
-                  aria-label="Clear custom filter"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            )}
-          </div>
-
-          {/* Real-time Project Search Box */}
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tech, AI, stack..."
-              className="w-full pl-9 pr-8 py-2 rounded-xl text-xs bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-xs"
-            />
-            {searchQuery && (
+            {/* Expand / Collapse Secondary Stacks */}
+            {secondaryTechStacks.length > 0 && (
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                aria-label="Clear search"
+                onClick={() => setShowAllTechStacks((prev) => !prev)}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 border border-dashed border-indigo-200 dark:border-indigo-800 transition-colors cursor-pointer"
               >
-                <X className="w-3.5 h-3.5" />
+                <span>{showAllTechStacks ? 'Show fewer' : `+${secondaryTechStacks.length} more`}</span>
               </button>
             )}
           </div>
+
+          {/* Secondary Filter Row: Search & Category pills */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800/60">
+            {/* Category Sub-filter */}
+            <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mr-1 hidden md:inline-block">
+                Category:
+              </span>
+              {categories.map((cat) => {
+                const isCatActive = activeCategory.toLowerCase() === cat.toLowerCase();
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                      isCatActive
+                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Real-time Search Box */}
+            <div className="relative w-full sm:w-64">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search projects, features..."
+                className="w-full pl-8 pr-8 py-1.5 rounded-xl text-xs bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder-slate-400 border border-slate-200 dark:border-slate-700/80 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
+
+        {/* Active Filter Badges Ribbon */}
+        {selectedTechs.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-6 px-1">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              Active Tech Filters:
+            </span>
+            {selectedTechs.map((tech) => (
+              <span
+                key={tech}
+                className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/80 shadow-2xs"
+              >
+                <span>{tech}</span>
+                <button
+                  type="button"
+                  onClick={() => handleToggleTech(tech)}
+                  className="p-0.5 rounded hover:bg-indigo-200 dark:hover:bg-indigo-900 text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-200 cursor-pointer"
+                  title={`Remove ${tech} filter`}
+                  aria-label={`Remove ${tech} filter`}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            <button
+              type="button"
+              onClick={handleClearTechFilters}
+              className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium ml-1 cursor-pointer"
+            >
+              Clear all
+            </button>
+          </div>
+        )}
 
         {/* Results Counter */}
         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-6 px-1">
@@ -490,151 +862,479 @@ export default function Projects({
             Showing <strong className="text-slate-800 dark:text-slate-200">{filteredProjects.length}</strong> of {projects.length} projects
           </span>
           {searchQuery && (
-            <span>Filtered by: &ldquo;{searchQuery}&rdquo;</span>
+            <span>Search query: &ldquo;{searchQuery}&rdquo;</span>
           )}
         </div>
 
-        {/* Projects Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          <AnimatePresence>
-            {filteredProjects.map((project) => (
-              <TiltProjectCard
-                key={project.id}
-                project={project}
-                activeFilter={activeFilter}
-                onFilterTech={setActiveFilter}
-                onSelectProject={handleSelect}
-                onInspectCode={setInspectCodeProjectId}
-                shouldReduceMotion={shouldReduceMotion}
-              />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        {/* Projects Grid or Friendly Empty State */}
+        {filteredProjects.length === 0 ? (
+          <div className="py-16 px-6 text-center rounded-3xl bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 shadow-sm">
+            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+              <Filter className="w-7 h-7" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              No projects match the selected technology filters
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto mb-6">
+              {matchMode === 'all' && selectedTechs.length > 1
+                ? `No single project uses all of the selected stacks: ${selectedTechs.join(' + ')}. Try switching to "Match Any (OR)" mode or clearing filters.`
+                : `No projects found matching the active filters (${selectedTechs.join(', ')})${searchQuery ? ` and query "${searchQuery}"` : ''}.`}
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {matchMode === 'all' && selectedTechs.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setMatchMode('any')}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-xs cursor-pointer"
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                  <span>Switch to Match Any (OR)</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedTechs([]);
+                  setActiveCategory('All');
+                  setSearchQuery('');
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset All Filters</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <motion.div
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            <AnimatePresence>
+              {filteredProjects.map((project) => (
+                <TiltProjectCard
+                  key={project.id}
+                  project={project}
+                  selectedTechs={selectedTechs}
+                  onToggleTech={handleToggleTech}
+                  onSelectProject={handleSelect}
+                  onInspectCode={setInspectCodeProjectId}
+                  shouldReduceMotion={shouldReduceMotion}
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
-        {/* Modal for Project Deep Dive */}
+        {/* Modal for Project Deep Dive & Blog-Style Case Study */}
         <AnimatePresence>
           {selectedProject && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => handleSelect(null)}
-                className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-950/75 backdrop-blur-md"
               />
 
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl z-10 max-h-[90vh] overflow-y-auto"
+                className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl z-10 max-h-[92vh] flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
               >
-                <button
-                  type="button"
-                  onClick={() => handleSelect(null)}
-                  className="absolute top-5 right-5 p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white"
-                  aria-label="Close dialog"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-
-                <div className="mb-4 aspect-video rounded-2xl overflow-hidden bg-slate-950">
-                  <img
-                    src={selectedProject.image}
-                    alt={selectedProject.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60">
-                    {selectedProject.category}
-                  </span>
-                  <span
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-indigo-50/70 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60"
-                    title="Estimated reading time for this breakdown"
-                  >
-                    <Clock className="w-3.5 h-3.5 text-indigo-500" />
-                    <span>{calculateProjectReadingTime(selectedProject)} min read</span>
-                  </span>
-                  {(selectedProject.dateCompleted || selectedProject.lastUpdated) && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                      <Calendar className="w-3.5 h-3.5 text-indigo-500" />
-                      <span>Completed: {selectedProject.dateCompleted || selectedProject.lastUpdated}</span>
+                {/* Modal Top Header with Tabs & Close */}
+                <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4 bg-slate-50/80 dark:bg-slate-950/60 backdrop-blur-md shrink-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 shrink-0">
+                      {selectedProject.category}
                     </span>
-                  )}
-                  {selectedProject.highlight && (
-                    <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400">
-                      &bull; {selectedProject.highlight}
-                    </span>
-                  )}
-                </div>
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
+                      {selectedProject.title}
+                    </h3>
+                  </div>
 
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
-                  {selectedProject.title}
-                </h3>
-
-                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-                  {selectedProject.description}
-                </p>
-
-                <div className="mb-6">
-                  <h4 className="text-xs font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-                    Stack Architecture
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.technologies.map((t) => (
-                      <span
-                        key={t}
-                        className="px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                  {/* Navigation Tabs between Case Study & Overview */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex p-1 rounded-xl bg-slate-200/70 dark:bg-slate-800/80 text-xs font-semibold">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setModalActiveTab('case-study');
+                          handleScrollModalToTop();
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          modalActiveTab === 'case-study'
+                            ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
                       >
-                        {t}
-                      </span>
-                    ))}
+                        <BookOpen className="w-3.5 h-3.5" />
+                        <span>Case Study</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setModalActiveTab('overview');
+                          handleScrollModalToTop();
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          modalActiveTab === 'overview'
+                            ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Overview</span>
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSelect(null)}
+                      className="p-2 rounded-xl bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                      aria-label="Close dialog"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  {/* Open Source Code Inspector */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const id = selectedProject.id;
-                      handleSelect(null);
-                      setInspectCodeProjectId(id);
-                    }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
-                  >
-                    <Code2 className="w-4 h-4" />
-                    <span>Inspect Full Source Code</span>
-                  </button>
+                {/* Modal Scrollable Body with Live Scroll Progress Tracking */}
+                <div
+                  ref={modalScrollContainerRef}
+                  onScroll={handleModalScroll}
+                  className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6"
+                >
+                  {modalActiveTab === 'case-study' ? (
+                    (() => {
+                      const caseStudy = PROJECT_CASE_STUDIES[selectedProject.id];
+                      const corpus = caseStudy
+                        ? getCaseStudyCorpus(caseStudy)
+                        : getProjectContentCorpus(selectedProject);
 
-                  {Boolean(selectedProject.demoUrl) && (
-                    <a
-                      href={selectedProject.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>Visit Live Demo</span>
-                    </a>
-                  )}
+                      return (
+                        <div className="space-y-8">
+                          {/* Dynamic Reading Time & Scroll Progress Banner */}
+                          <div className="sticky top-0 z-30 -mt-2 pt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md pb-2">
+                            <ReadingTimeIndicator
+                              content={corpus}
+                              variant="banner"
+                              scrollProgress={modalScrollProgress}
+                            />
+                          </div>
 
-                  {Boolean(selectedProject.githubUrl) && (
-                    <a
-                      href={selectedProject.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700"
-                    >
-                      <Github className="w-4 h-4" />
-                      <span>GitHub</span>
-                    </a>
+                          {/* Case Study Header & Meta Information */}
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2 mb-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                              {caseStudy?.publishDate && (
+                                <span className="inline-flex items-center gap-1">
+                                  <Calendar className="w-3 h-3 text-indigo-500" />
+                                  <span>{caseStudy.publishDate}</span>
+                                </span>
+                              )}
+                              <span>&bull;</span>
+                              <span>Author: {caseStudy?.author || 'KIM SAN'}</span>
+                              <span>&bull;</span>
+                              <span>Role: {caseStudy?.role || 'Lead Software Architect'}</span>
+                              {caseStudy?.targetAudience && (
+                                <>
+                                  <span>&bull;</span>
+                                  <span className="text-cyan-600 dark:text-cyan-400">
+                                    Target: {caseStudy.targetAudience}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+
+                            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+                              {caseStudy?.title || selectedProject.title}
+                            </h2>
+                            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                              {caseStudy?.subtitle || selectedProject.description}
+                            </p>
+                          </div>
+
+                          {/* Executive Summary Callout */}
+                          {caseStudy?.executiveSummary && (
+                            <div className="p-5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 flex items-start gap-3.5">
+                              <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+                              <div>
+                                <h4 className="text-xs font-mono uppercase tracking-wider font-semibold text-indigo-900 dark:text-indigo-300 mb-1.5">
+                                  Executive Summary
+                                </h4>
+                                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                                  {caseStudy.executiveSummary}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Section 1: The Challenge & Core Bottlenecks */}
+                          {caseStudy?.challenge && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <AlertCircle className="w-5 h-5 text-amber-500" />
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                                  1. The Challenge & Core Bottlenecks
+                                </h3>
+                              </div>
+                              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                                {caseStudy.challenge.overview}
+                              </p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                {caseStudy.challenge.keyBottlenecks.map((item, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2.5"
+                                  >
+                                    <span className="w-5 h-5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono font-bold flex items-center justify-center shrink-0 text-[10px]">
+                                      {idx + 1}
+                                    </span>
+                                    <span className="leading-snug">{item}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Section 2: Architecture & Decision Logs */}
+                          {caseStudy?.architecture && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <Layers className="w-5 h-5 text-indigo-500" />
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                                  2. Architectural Decisions & Tech Stack Rationale
+                                </h3>
+                              </div>
+                              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                                {caseStudy.architecture.description}
+                              </p>
+                              <div className="grid grid-cols-1 gap-3">
+                                {caseStudy.architecture.techStackChoices.map((choice, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800"
+                                  >
+                                    <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                                      <span className="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase">
+                                        {choice.technology}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                      {choice.reason}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Section 3: Engineering Solutions & Implementation */}
+                          {caseStudy?.engineeringSolutions && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <Lightbulb className="w-5 h-5 text-cyan-500" />
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                                  3. Key Engineering Solutions
+                                </h3>
+                              </div>
+                              <div className="space-y-3">
+                                {caseStudy.engineeringSolutions.map((sol, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800"
+                                  >
+                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
+                                      {sol.title}
+                                    </h4>
+                                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                      {sol.detail}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Section 4: Quantifiable Results & Metrics Grid */}
+                          {caseStudy?.metrics && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-emerald-500" />
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                                  4. Quantifiable Results & Performance Benchmarks
+                                </h3>
+                              </div>
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                {caseStudy.metrics.map((res, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 text-center"
+                                  >
+                                    <div className="text-xl sm:text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">
+                                      {res.value}
+                                    </div>
+                                    <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-1">
+                                      {res.label}
+                                    </div>
+                                    <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-mono">
+                                      {res.change || res.description}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Section 5: Lessons Learned & Key Takeaways */}
+                          {caseStudy?.keyTakeaways && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-5 h-5 text-indigo-500" />
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                                  5. Lessons Learned & Key Takeaways
+                                </h3>
+                              </div>
+                              <ul className="space-y-2">
+                                {caseStudy.keyTakeaways.map((point, idx) => (
+                                  <li
+                                    key={idx}
+                                    className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800"
+                                  >
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                                    <span className="leading-relaxed">{point}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()
+                  ) : (
+                    /* Overview Tab: Visual Preview, Stack Tags & Specs */
+                    <div className="space-y-6">
+                      <div className="aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800">
+                        <LazyImage
+                          src={selectedProject.image}
+                          alt={selectedProject.title}
+                          className="w-full h-full object-cover"
+                          aspectRatio="aspect-video"
+                          priority={true}
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60">
+                          {selectedProject.category}
+                        </span>
+                        <ReadingTimeIndicator
+                          content={getProjectContentCorpus(selectedProject)}
+                          variant="badge"
+                        />
+                        {(selectedProject.dateCompleted || selectedProject.lastUpdated) && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                            <Calendar className="w-3.5 h-3.5 text-indigo-500" />
+                            <span>Completed: {selectedProject.dateCompleted || selectedProject.lastUpdated}</span>
+                          </span>
+                        )}
+                        {selectedProject.highlight && (
+                          <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400">
+                            &bull; {selectedProject.highlight}
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+                        {selectedProject.title}
+                      </h3>
+
+                      <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        {selectedProject.description}
+                      </p>
+
+                      <div>
+                        <h4 className="text-xs font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                          Stack Architecture
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedProject.technologies.map((t) => (
+                            <span
+                              key={t}
+                              className="px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   )}
+                </div>
+
+                {/* Circular Scroll-Progress Indicator Pinned to the Corner of Case Studies */}
+                {modalActiveTab === 'case-study' && (
+                  <CircularScrollProgress
+                    progress={modalScrollProgress}
+                    onScrollToTop={handleScrollModalToTop}
+                    totalReadingMinutes={activeCaseStudyReadingMinutes}
+                    title={selectedProject.title}
+                    position="bottom-right"
+                    className="bottom-20 right-5 sm:bottom-22 sm:right-7"
+                  />
+                )}
+
+                {/* Modal Footer with Action Buttons */}
+                <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/70 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <ReadingTimeIndicator
+                      content={getProjectContentCorpus(selectedProject)}
+                      variant="inline"
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Open Source Code Inspector */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const id = selectedProject.id;
+                        handleSelect(null);
+                        setInspectCodeProjectId(id);
+                      }}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm cursor-pointer"
+                    >
+                      <Code2 className="w-4 h-4" />
+                      <span>Inspect Source Code</span>
+                    </button>
+
+                    {Boolean(selectedProject.demoUrl) && (
+                      <a
+                        href={selectedProject.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        <span>Live Demo</span>
+                      </a>
+                    )}
+
+                    {Boolean(selectedProject.githubUrl) && (
+                      <a
+                        href={selectedProject.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer"
+                      >
+                        <Github className="w-4 h-4" />
+                        <span>GitHub</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             </div>

@@ -15,6 +15,7 @@ import BackToTop from './components/BackToTop';
 import PortfolioSkeleton from './components/PortfolioSkeleton';
 import ResumeModal from './components/ResumeModal';
 import CourseLearningModal from './components/CourseLearningModal';
+import GlobalSearchModal from './components/GlobalSearchModal';
 import SectionDivider from './components/SectionDivider';
 import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
@@ -59,6 +60,58 @@ export default function App() {
   const [selectedCourseId, setSelectedCourseId] = useState<string | undefined>();
   const [selectedLessonId, setSelectedLessonId] = useState<string | undefined>();
   const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string } | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Global keyboard shortcut listener for ⌘K, Ctrl+K, and '/'
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Cmd+K (Mac) or Ctrl+K (Windows/Linux) toggles search
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+        return;
+      }
+
+      // '/' opens search when not in an input or textarea
+      if (e.key === '/' && !isSearchOpen) {
+        const target = document.activeElement;
+        const tagName = target?.tagName?.toLowerCase();
+        const isEditable = (target as HTMLElement)?.isContentEditable;
+        if (tagName !== 'input' && tagName !== 'textarea' && !isEditable) {
+          e.preventDefault();
+          setIsSearchOpen(true);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [isSearchOpen]);
+
+  // Smooth navigation helper
+  const handleNavigateSection = (sectionId: string) => {
+    if (sectionId === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        const headerOffset = 76;
+        let targetTop = 0;
+        let curr: HTMLElement | null = el;
+        while (curr) {
+          targetTop += curr.offsetTop;
+          curr = curr.offsetParent as HTMLElement | null;
+        }
+        const offsetPosition = Math.max(0, targetTop - headerOffset);
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    }
+    history.pushState(null, '', `#${sectionId}`);
+    setActiveSection(sectionId);
+  };
 
   // Open course modal helper
   const handleOpenCourseModal = (courseId?: string, lessonId?: string) => {
@@ -118,6 +171,7 @@ export default function App() {
         activeSection={activeSection}
         onSectionChange={setActiveSection}
         onOpenCourseModal={() => handleOpenCourseModal()}
+        onOpenSearch={() => setIsSearchOpen(true)}
       />
 
       {/* Main Content Areas */}
@@ -228,6 +282,19 @@ export default function App() {
         onClose={() => setIsCourseModalOpen(false)}
         initialCourseId={selectedCourseId}
         initialLessonId={selectedLessonId}
+      />
+
+      {/* Global Search & Command Palette Modal */}
+      <GlobalSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSelectProject={(project) => {
+          setActiveProject(project);
+        }}
+        onOpenCourseModal={(courseId) => {
+          handleOpenCourseModal(courseId);
+        }}
+        onNavigateSection={handleNavigateSection}
       />
     </div>
     </>
