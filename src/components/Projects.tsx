@@ -1276,16 +1276,19 @@ export default function Projects({
                 </div>
 
                 {/* Circular Scroll-Progress Indicator Pinned to the Corner of Case Studies */}
-                {modalActiveTab === 'case-study' && (
-                  <CircularScrollProgress
-                    progress={modalScrollProgress}
-                    onScrollToTop={handleScrollModalToTop}
-                    totalReadingMinutes={activeCaseStudyReadingMinutes}
-                    title={selectedProject.title}
-                    position="bottom-right"
-                    className="bottom-20 right-5 sm:bottom-22 sm:right-7"
-                  />
-                )}
+                <AnimatePresence>
+                  {modalActiveTab === 'case-study' && (
+                    <CircularScrollProgress
+                      key={`case-study-progress-${selectedProject.id}`}
+                      progress={modalScrollProgress}
+                      onScrollToTop={handleScrollModalToTop}
+                      totalReadingMinutes={activeCaseStudyReadingMinutes}
+                      title={selectedProject.title}
+                      position="bottom-right"
+                      className="bottom-20 right-5 sm:bottom-22 sm:right-7"
+                    />
+                  )}
+                </AnimatePresence>
 
                 {/* Modal Footer with Action Buttons */}
                 <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/70 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shrink-0">

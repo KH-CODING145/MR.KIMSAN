@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { motion, useReducedMotion, useInView, type Variants } from 'motion/react';
 import FadeInUpSection from './FadeInUpSection';
 import {
@@ -29,9 +29,13 @@ import {
   TrendingUp,
   Award,
   LucideIcon,
+  Share2,
 } from 'lucide-react';
+import SkillsForceGraph from './SkillsForceGraph';
+import { ProjectItem } from './Projects';
+import { portfolio } from '../data/portfolio';
 
-interface SkillItem {
+export interface SkillItem {
   name: string;
   category: 'Frontend' | 'Backend' | 'AI & Automation' | 'Database' | 'Programming' | 'Tools' | string;
   level: number;
@@ -42,6 +46,7 @@ interface SkillItem {
 
 interface SkillsProps {
   skills: SkillItem[];
+  projects?: ProjectItem[];
 }
 
 const iconMap: Record<string, LucideIcon> = {
@@ -183,9 +188,24 @@ function DynamicProgressBar({ level, shouldReduceMotion, delay = 0 }: DynamicPro
   );
 }
 
-export default function Skills({ skills }: SkillsProps) {
+export default function Skills({ skills, projects }: SkillsProps) {
+  const effectiveProjects = useMemo(() => {
+    return projects && projects.length > 0 ? projects : (portfolio.projects as ProjectItem[]);
+  }, [projects]);
+
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [skillViewType, setSkillViewType] = useState<'graph' | 'cards'>('graph');
   const shouldReduceMotion = useReducedMotion();
+
+  const handleSelectSkillFromGraph = useCallback(
+    (skillName: string) => {
+      const found = skills.find((s) => s.name.toLowerCase() === skillName.toLowerCase());
+      if (found) {
+        setActiveCategory(found.category);
+      }
+    },
+    [skills]
+  );
 
   const containerVariants: Variants = useMemo(() => ({
     hidden: { opacity: 0 },
@@ -261,94 +281,156 @@ export default function Skills({ skills }: SkillsProps) {
           </div>
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {categories.map((cat) => {
-            const isActive = activeCategory === cat;
-            const count = categoryCounts[cat] || 0;
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setActiveCategory(cat)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 inline-flex items-center gap-1.5 cursor-pointer ${
-                  isActive
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 scale-105'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+        {/* View Mode Switcher: D3 Interactive Force Graph vs Grid of Cards */}
+        <div className="flex justify-center mb-10 px-4">
+          <div className="inline-flex p-1.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-sm backdrop-blur-md">
+            <button
+              type="button"
+              onClick={() => setSkillViewType('graph')}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                skillViewType === 'graph'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Share2 className="w-4 h-4" />
+              <span>D3.js Force-Directed Graph</span>
+              <span
+                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                  skillViewType === 'graph'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800'
                 }`}
               >
-                <span>{cat}</span>
-                <span
-                  className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full ${
+                Interactive
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSkillViewType('cards')}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                skillViewType === 'cards'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>Proficiency Cards &amp; Grid</span>
+              <span
+                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                  skillViewType === 'cards'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                }`}
+              >
+                {skills.length}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {skillViewType === 'cards' && (
+          /* Category Filter Pills */
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat;
+              const count = categoryCounts[cat] || 0;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 inline-flex items-center gap-1.5 cursor-pointer ${
                     isActive
-                      ? 'bg-white/20 text-white'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 scale-105'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
                   }`}
                 >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                  <span>{cat}</span>
+                  <span
+                    className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full ${
+                      isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </FadeInUpSection>
 
-      {/* Skills Grid Container with Staggered Entrance */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
-        <motion.div
-          key={activeCategory}
-          variants={containerVariants}
-          initial={shouldReduceMotion ? false : 'hidden'}
-          whileInView={shouldReduceMotion ? undefined : 'visible'}
-          viewport={{ once: true, amount: 0.05, margin: '0px 0px -40px 0px' }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {filteredSkills.map((skill, index) => {
-            const Icon = iconMap[skill.icon] || Code2;
-            return (
-              <motion.div
-                key={skill.name}
-                variants={cardVariants}
-                whileHover={shouldReduceMotion ? undefined : { y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
-                className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-500/50 dark:hover:border-indigo-500/50 hover:shadow-md transition-colors group flex flex-col justify-between"
-              >
-                <div>
-                  {/* Header: Icon, Name, Category & Experience */}
-                  <div className="flex items-start justify-between mb-3 gap-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-indigo-500 dark:group-hover:text-slate-950 transition-all duration-200 shrink-0">
-                        <Icon className="w-5 h-5" />
+      {skillViewType === 'graph' ? (
+        /* D3.js Force-Directed Graph Showcase */
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SkillsForceGraph
+            skills={skills}
+            projects={effectiveProjects}
+            onSelectSkill={handleSelectSkillFromGraph}
+          />
+        </div>
+      ) : (
+        /* Skills Grid Container with Staggered Entrance */
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
+          <motion.div
+            key={activeCategory}
+            variants={containerVariants}
+            initial={shouldReduceMotion ? false : 'hidden'}
+            whileInView={shouldReduceMotion ? undefined : 'visible'}
+            viewport={{ once: true, amount: 0.05, margin: '0px 0px -40px 0px' }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {filteredSkills.map((skill, index) => {
+              const Icon = iconMap[skill.icon] || Code2;
+              return (
+                <motion.div
+                  key={skill.name}
+                  variants={cardVariants}
+                  whileHover={shouldReduceMotion ? undefined : { y: -4, transition: { duration: 0.2, ease: 'easeOut' } }}
+                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-500/50 dark:hover:border-indigo-500/50 hover:shadow-md transition-colors group flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Header: Icon, Name, Category & Experience */}
+                    <div className="flex items-start justify-between mb-3 gap-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-indigo-500 dark:group-hover:text-slate-950 transition-all duration-200 shrink-0">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-sm text-slate-900 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            {skill.name}
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                            {skill.category}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-sm text-slate-900 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                          {skill.name}
-                        </h3>
-                        <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                          {skill.category}
-                        </span>
-                      </div>
+                      <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">
+                        {skill.experience}
+                      </span>
                     </div>
-                    <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">
-                      {skill.experience}
-                    </span>
+
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                      {skill.description}
+                    </p>
                   </div>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-                    {skill.description}
-                  </p>
-                </div>
-
-                {/* Dynamic Scroll-Triggered Animated Proficiency Progress Bar */}
-                <DynamicProgressBar
-                  level={skill.level}
-                  shouldReduceMotion={shouldReduceMotion}
-                  delay={index * 0.05}
-                />
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      </div>
+                  {/* Dynamic Scroll-Triggered Animated Proficiency Progress Bar */}
+                  <DynamicProgressBar
+                    level={skill.level}
+                    shouldReduceMotion={shouldReduceMotion}
+                    delay={index * 0.05}
+                  />
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 }

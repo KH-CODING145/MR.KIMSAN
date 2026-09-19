@@ -196,7 +196,7 @@ export default function App() {
         <SectionDivider icon={Code2} label="Stack" />
 
         {/* 3. Skills Section */}
-        <Skills skills={portfolio.skills as any} />
+        <Skills skills={portfolio.skills as any} projects={portfolio.projects as any} />
 
         <SectionDivider icon={Layers} label="Offerings" />
 

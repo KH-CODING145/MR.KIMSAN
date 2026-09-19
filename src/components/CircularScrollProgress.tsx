@@ -1,9 +1,11 @@
-import { useState, useRef, useId } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp, Check, Clock, BookOpen } from 'lucide-react';
+import { useState, useId, Key } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { ArrowUp, Check, Clock, BookOpen, Sparkles } from 'lucide-react';
 import { calculateRemainingReadingTime } from '../utils/readingTime';
 
 export interface CircularScrollProgressProps {
+  key?: Key;
+
   /**
    * Live scroll progress normalized between 0 and 1.
    */
@@ -49,13 +51,14 @@ export default function CircularScrollProgress({
   className = '',
   autoHideAtZero = false,
 }: CircularScrollProgressProps) {
+  const shouldReduceMotion = useReducedMotion();
   const [isHovered, setIsHovered] = useState(false);
   const gradientId = useId();
 
   // Clamp normalized progress between 0 and 1
   const clampedProgress = Math.min(1, Math.max(0, progress || 0));
   const percentage = Math.round(clampedProgress * 100);
-  const isCompleted = percentage >= 98;
+  const isCompleted = percentage >= 100;
 
   // Geometry calculations for SVG circular ring
   const size = 52;
@@ -81,7 +84,18 @@ export default function CircularScrollProgress({
   }
 
   return (
-    <div
+    <motion.aside
+      aria-label="Case study scroll progress indicator"
+      initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.65, y: 16 }}
+      animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+      exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.7, y: 12 }}
+      transition={{
+        type: 'spring',
+        stiffness: 360,
+        damping: 24,
+        mass: 0.8,
+        delay: 0.22,
+      }}
       className={`absolute ${positionClasses} z-40 select-none ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -101,8 +115,9 @@ export default function CircularScrollProgress({
                 <BookOpen className="w-3 h-3" />
                 <span>Reading Depth</span>
               </span>
-              <span className="font-mono font-bold text-white text-[11px]">
-                {percentage}%
+              <span className="font-mono font-bold text-white text-[11px] flex items-center gap-1">
+                {isCompleted && <Sparkles className="w-3 h-3 text-emerald-400" />}
+                <span>{percentage}%</span>
               </span>
             </div>
 
@@ -116,7 +131,7 @@ export default function CircularScrollProgress({
               <div className="flex items-center gap-1.5 text-[11px] text-slate-300 mb-1">
                 <Clock className="w-3 h-3 text-cyan-400" />
                 <span>
-                  {isCompleted ? 'Completed reading' : `${remainingTime.formattedRemaining} left`}
+                  {isCompleted ? 'Case study completed!' : `${remainingTime.formattedRemaining} left`}
                 </span>
               </div>
             )}
@@ -131,24 +146,57 @@ export default function CircularScrollProgress({
         )}
       </AnimatePresence>
 
-      {/* Interactive Circular Progress Button */}
+      {/* Interactive Circular Progress Button with 100% Pulse */}
       <motion.button
         type="button"
         role="progressbar"
         aria-valuenow={percentage}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuetext={`Case study reading depth: ${percentage}%`}
-        aria-label={`Reading depth: ${percentage}%. ${onScrollToTop ? 'Click to jump to top.' : ''}`}
+        aria-valuetext={`Case study reading depth: ${percentage}%${isCompleted ? ' - Completed' : ''}`}
+        aria-label={`Reading depth: ${percentage}%. ${isCompleted ? 'Completed. ' : ''}${onScrollToTop ? 'Click to jump to top.' : ''}`}
         onClick={onScrollToTop}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.94 }}
-        className={`group relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer ${
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.92 }}
+        animate={
+          isCompleted && !shouldReduceMotion
+            ? {
+                scale: [1, 1.06, 1, 1.04, 1],
+                transition: {
+                  duration: 2.2,
+                  repeat: Infinity,
+                  repeatType: 'loop',
+                  ease: 'easeInOut',
+                },
+              }
+            : {
+                scale: 1,
+              }
+        }
+        className={`group relative flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer ${
           isCompleted
-            ? 'shadow-emerald-500/20 border border-emerald-500/40 dark:border-emerald-500/40 ring-2 ring-emerald-500/20'
+            ? 'shadow-emerald-500/25 border border-emerald-500/50 dark:border-emerald-400/50 ring-2 ring-emerald-500/25'
             : 'shadow-slate-900/10 dark:shadow-black/40 border border-slate-200/90 dark:border-slate-800'
         }`}
       >
+        {/* Subtle Halo Pulse Ring when reaching 100% completion */}
+        {isCompleted && !shouldReduceMotion && (
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{
+              opacity: [0, 0.45, 0],
+              scale: [0.95, 1.25, 1.45],
+            }}
+            transition={{
+              duration: 2.2,
+              repeat: Infinity,
+              repeatType: 'loop',
+              ease: 'easeOut',
+            }}
+            className="absolute inset-0 rounded-full border-2 border-emerald-500/60 dark:border-emerald-400/60 pointer-events-none"
+          />
+        )}
+
         {/* Circular Progress SVG Ring */}
         <svg
           width={size}
@@ -192,7 +240,7 @@ export default function CircularScrollProgress({
         </svg>
 
         {/* Center Content: Percentage or Up-arrow on Hover */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {isHovered && onScrollToTop ? (
             <motion.div
               initial={{ scale: 0.5, opacity: 0 }}
@@ -204,9 +252,9 @@ export default function CircularScrollProgress({
             </motion.div>
           ) : isCompleted ? (
             <motion.div
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.15 }}
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 450, damping: 20 }}
               className="text-emerald-600 dark:text-emerald-400"
             >
               <Check className="w-4 h-4 stroke-[3]" />
@@ -222,12 +270,7 @@ export default function CircularScrollProgress({
             </div>
           )}
         </div>
-
-        {/* Subtle Completion Pulse Effect */}
-        {isCompleted && (
-          <span className="absolute inset-0 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 animate-ping pointer-events-none" />
-        )}
       </motion.button>
-    </div>
+    </motion.aside>
   );
 }

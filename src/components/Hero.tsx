@@ -1,7 +1,27 @@
-import { motion, useReducedMotion } from 'motion/react';
-import { ArrowRight, Github, Linkedin, Facebook, Send, Youtube, Terminal, Sparkles, CheckCircle, GraduationCap, Languages, Video, Play } from 'lucide-react';
+import { useState } from 'react';
+import { motion, useReducedMotion, AnimatePresence } from 'motion/react';
+import {
+  ArrowRight,
+  Github,
+  Linkedin,
+  Facebook,
+  Send,
+  Youtube,
+  Terminal,
+  Sparkles,
+  CheckCircle,
+  GraduationCap,
+  Languages,
+  Video,
+  Play,
+  User,
+  Layout,
+  Maximize2,
+} from 'lucide-react';
 import TypewriterTitle from './TypewriterTitle';
 import FadeInUpSection from './FadeInUpSection';
+import ProDigitalBrandPoster from './ProDigitalBrandPoster';
+import ProDigitalBrandPosterModal from './ProDigitalBrandPosterModal';
 
 interface HeroProps {
   personal: {
@@ -28,6 +48,8 @@ interface HeroProps {
 
 export default function Hero({ personal, social, onOpenResume, onOpenCourseModal }: HeroProps) {
   const shouldReduceMotion = useReducedMotion();
+  const [activeVisualTab, setActiveVisualTab] = useState<'profile' | 'poster'>('poster');
+  const [posterModalOpen, setPosterModalOpen] = useState(false);
 
   const socialLinks = [
     { name: 'GitHub', href: social.github, icon: Github },
@@ -151,6 +173,17 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
                 <Video className="w-4 h-4 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform" />
                 <span>COURSE/LEARNING</span>
               </button>
+
+              <button
+                id="hero-poster-modal-btn"
+                type="button"
+                onClick={() => setPosterModalOpen(true)}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cyan-950/20 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 font-semibold text-sm border border-cyan-500/40 hover:bg-cyan-500/10 active:scale-95 transition-all duration-200 shadow-xs cursor-pointer group"
+                title="View Official PRO DIGITAL Brand Graphic & Poster"
+              >
+                <Sparkles className="w-4 h-4 text-cyan-500 animate-pulse" />
+                <span>PRO DIGITAL Graphic</span>
+              </button>
             </div>
 
             {/* Social Media Links */}
@@ -178,114 +211,157 @@ export default function Hero({ personal, social, onOpenResume, onOpenCourseModal
             </div>
           </motion.div>
 
-          {/* Right Column: Interactive Profile Visual */}
+          {/* Right Column: Interactive Profile Visual & Brand Poster */}
           <motion.div
-            className="lg:col-span-5 flex justify-center lg:justify-end"
+            className="lg:col-span-5 flex flex-col items-center lg:items-end"
             initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
-            <div className="relative w-full max-w-[380px] sm:max-w-[420px]">
-              {/* Glow backdrop ring */}
-              <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 opacity-20 dark:opacity-30 blur-xl"></div>
+            {/* Visual View Switcher */}
+            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-sm mb-3 z-10">
+              <button
+                type="button"
+                onClick={() => setActiveVisualTab('poster')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  activeVisualTab === 'poster'
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+                <span>Brand Poster</span>
+              </button>
 
-              {/* Main Card Container */}
-              <div className="relative rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 shadow-xl">
-                {/* Profile Image with subtle floating container */}
-                <div className="relative rounded-2xl overflow-hidden bg-slate-950 aspect-square flex items-center justify-center">
-                  <img
-                    src={personal.avatar}
-                    alt={`${personal.name} - ${personal.title}`}
-                    className="w-full h-full object-cover object-top"
-                    loading="eager"
-                    referrerPolicy="no-referrer"
-                    onError={(e) => {
-                      if (personal.googleDriveAvatar && e.currentTarget.src !== personal.googleDriveAvatar) {
-                        e.currentTarget.src = personal.googleDriveAvatar;
-                      }
-                    }}
-                  />
-                  {/* Subtle gradient overlay at bottom */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+              <button
+                type="button"
+                onClick={() => setActiveVisualTab('profile')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  activeVisualTab === 'profile'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>Photo Profile</span>
+              </button>
+            </div>
 
-                  {/* Floating Micro Badge: Full-Stack & AI Software */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-700/60 text-white text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                      <span className="font-medium">Full-Stack &amp; AI Software</span>
-                    </div>
-                    <span className="text-[10px] font-mono text-cyan-300">v3.5.0</span>
-                  </div>
+            <div className="relative w-full max-w-[380px] sm:max-w-[440px]">
+              {activeVisualTab === 'poster' ? (
+                <div className="relative">
+                  <ProDigitalBrandPoster onOpenModal={() => setPosterModalOpen(true)} />
                 </div>
+              ) : (
+                <div className="relative">
+                  {/* Glow backdrop ring */}
+                  <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 opacity-20 dark:opacity-30 blur-xl"></div>
 
-                {/* Tech Pills under avatar */}
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
-                  <p className="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-                    Core Technologies
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {techPills.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/50 font-medium"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                  {/* Main Card Container */}
+                  <div className="relative rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 shadow-xl">
+                    {/* Profile Image with subtle floating container */}
+                    <div className="relative rounded-2xl overflow-hidden bg-slate-950 aspect-square flex items-center justify-center">
+                      <img
+                        src={personal.avatar}
+                        alt={`${personal.name} - ${personal.title}`}
+                        className="w-full h-full object-cover object-top"
+                        loading="eager"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          if (personal.googleDriveAvatar && e.currentTarget.src !== personal.googleDriveAvatar) {
+                            e.currentTarget.src = personal.googleDriveAvatar;
+                          }
+                        }}
+                      />
+                      {/* Subtle gradient overlay at bottom */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
 
-                {/* 5 Languages under Core Technologies */}
-                <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
-                      <Languages className="w-3.5 h-3.5 text-indigo-500" />
-                      <span>Languages Proficiency</span>
-                    </p>
-                    <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50">
-                      {languagesList.length} Languages
-                    </span>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    {languagesList.map((lang) => (
-                      <div key={lang.name} className="space-y-0.5">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-slate-700 dark:text-slate-200 text-[11px]">
-                            {lang.name}
-                          </span>
-                          <span className="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
-                            {lang.percent}%
-                          </span>
+                      {/* Floating Micro Badge: Full-Stack & AI Software */}
+                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-700/60 text-white text-xs">
+                        <div className="flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                          <span className="font-medium">Full-Stack &amp; AI Software</span>
                         </div>
-                        <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                          <motion.div
-                            initial={shouldReduceMotion ? { width: `${lang.percent}%` } : { width: 0 }}
-                            animate={{ width: `${lang.percent}%` }}
-                            transition={{ duration: 0.7, ease: 'easeOut' }}
-                            className={`h-full rounded-full bg-gradient-to-r ${lang.barColor}`}
-                          />
-                        </div>
+                        <span className="text-[10px] font-mono text-cyan-300">v3.5.0</span>
                       </div>
-                    ))}
+                    </div>
+
+                    {/* Tech Pills under avatar */}
+                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                      <p className="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                        Core Technologies
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {techPills.map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2.5 py-1 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/50 font-medium"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 5 Languages under Core Technologies */}
+                    <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                          <Languages className="w-3.5 h-3.5 text-indigo-500" />
+                          <span>Languages Proficiency</span>
+                        </p>
+                        <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50">
+                          {languagesList.length} Languages
+                        </span>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        {languagesList.map((lang) => (
+                          <div key={lang.name} className="space-y-0.5">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-semibold text-slate-700 dark:text-slate-200 text-[11px]">
+                                {lang.name}
+                              </span>
+                              <span className="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
+                                {lang.percent}%
+                              </span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                              <motion.div
+                                initial={shouldReduceMotion ? { width: `${lang.percent}%` } : { width: 0 }}
+                                animate={{ width: `${lang.percent}%` }}
+                                transition={{ duration: 0.7, ease: 'easeOut' }}
+                                className={`h-full rounded-full bg-gradient-to-r ${lang.barColor}`}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating Stat Pill Left */}
+                  <div className="hidden sm:flex items-center gap-2.5 absolute -bottom-4 -left-6 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                      <CheckCircle className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white">100% Quality</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Clean & Tested Code</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Floating Stat Pill Left */}
-              <div className="hidden sm:flex items-center gap-2.5 absolute -bottom-4 -left-6 px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg">
-                <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                  <CheckCircle className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">100% Quality</div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Clean & Tested Code</div>
-                </div>
-              </div>
+              )}
             </div>
           </motion.div>
         </div>
       </FadeInUpSection>
+
+      {/* Fullscreen Brand Poster Modal */}
+      <ProDigitalBrandPosterModal
+        isOpen={posterModalOpen}
+        onClose={() => setPosterModalOpen(false)}
+      />
     </section>
   );
 }

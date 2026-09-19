@@ -8,12 +8,32 @@ export const portfolio = {
   personal: {
     brand: "PRO DIGITAL",
     name: "Mr.KIM SAN",
-    title: "Full-Stack Developer & AI Software Engineer",
-    subtitle: "Frontend, Backend, Cloud Architecture & AI-Powered Software",
+    title: "FULL STACK DEVELOPER & AI SOFTWARE ENGINEERING",
+    subtitle: "Web Development | API | Database | Automation | AI Solutions | System Design",
     description:
-      "I design, engineer, and build high-performance full-stack web applications and intelligent software solutions with AI—uniting clean scalable code, resilient cloud architectures, and modern agentic intelligence.",
+      "Turning ideas into powerful digital solutions with AI technology. Full-stack developer and AI software engineer building high-performance scalable systems, intelligent agents, and modern cloud solutions.",
+    motto: "Code Build Create Future",
+    quote: "Turning ideas into powerful digital solutions with AI technology.",
+    secondaryMotto: "Better Code Bigger Dreams",
+    tagline: "TECHNOLOGY BRIGHTER FUTURE",
+    pillars: ["LEARN", "BUILD", "INNOVATE"],
+    coreDomains: [
+      "Web Development",
+      "Full Stack Development",
+      "AI & Machine Learning",
+      "Desktop & Mobile Apps",
+    ],
+    subdomains: [
+      "WEB DEVELOPMENT",
+      "API",
+      "DATABASE",
+      "AUTOMATION",
+      "AI SOLUTIONS",
+      "SYSTEM DESIGN",
+    ],
     location: "KOMPONGTHOM, Phnom Penh, Cambodia KH",
-    email: "kimsan.dev@gmail.com",
+    email: "pro.digital.dev@gmail.com",
+    secondaryEmail: "kimsan.dev@gmail.com",
     phone: "+855 (016/093/012) 949 145",
     avatar: "/images/kim-san.jpg",
     googleDriveAvatar: "https://lh3.googleusercontent.com/d/1Wp9FqC_xCINn16x-MzoqY6cug38SDAlf",
@@ -25,8 +45,10 @@ export const portfolio = {
     github: "https://gist.github.com/kimsan-developer",
     linkedin: "https://linkedin.com",
     facebook: "https://www.youtube.com/@kimsan2000",
-    telegram: "https://t.me/kim_san145",
+    telegram: "https://t.me/pro_digital",
+    telegramUsername: "t.me/pro_digital",
     youtube: "https://www.youtube.com/@kimsan2000",
+    twitter: "https://twitter.com",
   },
 
   about: {
@@ -255,6 +277,22 @@ export const portfolio = {
     },
 
     // AI & Intelligent Systems
+    {
+      name: "Telegram Bot",
+      category: "AI & Automation",
+      level: 95,
+      experience: "3+ years",
+      icon: "Send",
+      description: "High-throughput Telegram bot architectures, webhook webservers, inline bots, mini-apps, and automated community channels.",
+    },
+    {
+      name: "AI & LLM",
+      category: "AI & Automation",
+      level: 96,
+      experience: "2+ years",
+      icon: "Sparkles",
+      description: "Large Language Models, agentic reasoning, prompt engineering, fine-tuning, and intelligent system architectures.",
+    },
     {
       name: "Gemini & LLMs",
       category: "AI & Automation",
